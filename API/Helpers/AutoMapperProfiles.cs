@@ -11,6 +11,9 @@ public class AutoMapperProfiles : Profile
         CreateMap<AppUser, UserDto>();
         CreateMap<RegisterDto, AppUser>();
         CreateMap<LoginDto, AppUser>();
+        CreateMap<Department, DepartmentDto>();
+        CreateMap<DepartmentCreateDto, Department>();
+        CreateMap<AppUser, ManagerDto>();
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
