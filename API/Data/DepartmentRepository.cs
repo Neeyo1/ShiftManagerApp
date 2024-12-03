@@ -36,6 +36,7 @@ public class DepartmentRepository(DataContext context, IMapper mapper) : IDepart
     {
         return await context.Departments
             .Include(x => x.Managers)
+            .Include(x => x.Employees)
             .FirstOrDefaultAsync(x => x.Id == departmentId);
     }
 

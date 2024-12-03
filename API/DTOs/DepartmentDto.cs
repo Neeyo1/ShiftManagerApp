@@ -4,5 +4,6 @@ public class DepartmentDto
 {
     public int Id { get; set; }
     public required string Name { get; set; }
+    public int EmployeeCount { get; set; }
     public IEnumerable<ManagerDto> Managers { get; set; } = [];
 }
