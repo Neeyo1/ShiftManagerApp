@@ -17,8 +17,12 @@ public class AutoMapperProfiles : Profile
         CreateMap<AppUser, ManagerDto>();
         CreateMap<Employee, EmployeeDto>();
         CreateMap<EmployeeCreateDto, Employee>();
+        CreateMap<WorkShift, WorkShiftDto>();
+        CreateMap<WorkShiftCreateDto, WorkShift>();
+        CreateMap<WorkShiftEditDto, WorkShift>();
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
+        CreateMap<string, TimeOnly>().ConvertUsing(s => TimeOnly.Parse(s));
         CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         CreateMap<DateTime?, DateTime?>().ConvertUsing(d => d.HasValue 
             ? DateTime.SpecifyKind(d.Value, DateTimeKind.Utc) : null);
