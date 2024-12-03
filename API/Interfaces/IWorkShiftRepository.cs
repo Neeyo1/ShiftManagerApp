@@ -9,6 +9,6 @@ public interface IWorkShiftRepository
     void DeleteWorkShift(WorkShift workShift);
     Task<IEnumerable<WorkShiftDto>> GetWorkShiftsAsync();
     Task<WorkShift?> GetWorkShiftByIdAsync(int workShiftId);
-    Task<WorkShift?> GetWorkShiftByEmployeeAndDate(int employeeId, DateOnly date);
+    Task<WorkShift?> GetWorkShiftByEmployeeAndDateAsync(int employeeId, DateOnly date);
     Task<bool> Complete();
 }

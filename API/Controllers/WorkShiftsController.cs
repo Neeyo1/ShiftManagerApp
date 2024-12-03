@@ -44,7 +44,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
 
         for (var date = dateFrom; date <= dateTo; date = date.AddDays(1))
         {
-            var workShift = await workShiftRepository.GetWorkShiftByEmployeeAndDate(employee.Id, date);
+            var workShift = await workShiftRepository.GetWorkShiftByEmployeeAndDateAsync(employee.Id, date);
             if (workShift != null) continue;
 
             var start = new DateTime(date, hourStart).ToUniversalTime();

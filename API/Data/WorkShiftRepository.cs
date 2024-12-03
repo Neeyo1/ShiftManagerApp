@@ -32,7 +32,7 @@ public class WorkShiftRepository(DataContext context, IMapper mapper) : IWorkShi
             .FindAsync(workShiftId);
     }
 
-    public async Task<WorkShift?> GetWorkShiftByEmployeeAndDate(int employeeId, DateOnly date)
+    public async Task<WorkShift?> GetWorkShiftByEmployeeAndDateAsync(int employeeId, DateOnly date)
     {
         return await context.WorkShifts
             .FirstOrDefaultAsync(x => x.EmployeeId == employeeId && x.Date == date);

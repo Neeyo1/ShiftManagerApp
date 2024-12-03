@@ -20,6 +20,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<WorkShift, WorkShiftDto>();
         CreateMap<WorkShiftCreateDto, WorkShift>();
         CreateMap<WorkShiftEditDto, WorkShift>();
+        CreateMap<WorkRecord, WorkRecordDto>();
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<string, TimeOnly>().ConvertUsing(s => TimeOnly.Parse(s));
