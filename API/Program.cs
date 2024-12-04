@@ -21,6 +21,7 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IWorkShiftRepository, WorkShiftRepository>();
 builder.Services.AddScoped<IWorkRecordRepository, WorkRecordRepository>();
+builder.Services.AddScoped<ISummaryRepository, SummaryRepository>();
 
 builder.Services.AddDbContext<DataContext>(opt =>
 {

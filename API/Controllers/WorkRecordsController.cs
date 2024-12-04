@@ -52,6 +52,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
             if (timeNow >= workRecord.Start.AddHours(12)) //employee forgot to register leave
             {
                 workRecord.End = workRecord.Start.AddHours(8);
+                workRecord.MinutesInWork = (int)(workRecord.End.Value - workRecord.Start).TotalMinutes;
 
                 var newWorkRecord = new WorkRecord
                 {
@@ -65,6 +66,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
             else //employee left normally
             {
                 workRecord.End = timeNow;
+                workRecord.MinutesInWork = (int)(workRecord.End.Value - workRecord.Start).TotalMinutes;
                 if (await workRecordRepository.Complete()) return Ok($"Bye {employee.FirstName}");
             }
         }
