@@ -31,23 +31,28 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     [HttpPost]
     public async Task<ActionResult<WorkShiftDto>> CreateWorkShift(WorkShiftCreateDto workShiftCreateDto)
     {
+        var employee = await employeeRepository.GetEmployeeByIdAsync(workShiftCreateDto.EmployeeId);
+        if (employee == null) return NotFound();
+
         var today = DateOnly.FromDateTime(DateTime.Now);
         var dateFrom = DateOnly.Parse(workShiftCreateDto.DateFrom);
         var dateTo = DateOnly.Parse(workShiftCreateDto.DateTo);
         var hourStart = TimeOnly.Parse(workShiftCreateDto.Start);
 
-        if (dateFrom > dateTo || dateFrom < today || dateTo > today.AddDays(40))
-            return BadRequest("Dates validation error");
-
-        var employee = await employeeRepository.GetEmployeeByIdAsync(workShiftCreateDto.EmployeeId);
-        if (employee == null) return NotFound();
+        if (dateFrom > dateTo)
+            return BadRequest("Date from cannot be later than date to");
+        if (dateFrom < today)
+            return BadRequest("You cannot create shifts for days in the past");
+        if (dateTo > today.AddDays(40))
+            return BadRequest("You cannot create shifts for more than 40 days in the future");
 
         for (var date = dateFrom; date <= dateTo; date = date.AddDays(1))
         {
             var workShift = await workShiftRepository.GetWorkShiftByEmployeeAndDateAsync(employee.Id, date);
             if (workShift != null) continue;
 
-            var start = new DateTime(date, hourStart).ToUniversalTime();
+            var start = DateTime.SpecifyKind(new DateTime(date, hourStart), DateTimeKind.Utc);
+            //TODO Use client timezone to properly set new datetime
             var newWorkShift = new WorkShift
             {
                 Date = date,
@@ -69,11 +74,9 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
         var workShift = await workShiftRepository.GetWorkShiftByIdAsync(workShiftId);
         if (workShift == null) return NotFound();
 
-        var hourStart = TimeOnly.Parse(workShiftEditDto.Start);
-        var start = new DateTime(workShift.Date, hourStart).ToUniversalTime();
+        mapper.Map(workShiftEditDto, workShift);
 
-        workShift.Start = start;
-        workShift.End = start.AddHours(workShiftEditDto.ShiftLength);
+        workShift.End = workShift.Start.AddHours(workShiftEditDto.ShiftLength);
 
         if (await workShiftRepository.Complete()) return Ok(mapper.Map<WorkShiftDto>(workShift));
         return BadRequest("Failed to edit work shift");

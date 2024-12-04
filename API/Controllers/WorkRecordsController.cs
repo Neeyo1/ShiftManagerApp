@@ -79,19 +79,12 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
         var workRecord = await workRecordRepository.GetWorkRecordByIdAsync(workRecordId);
         if (workRecord == null) return NotFound();
 
-        var hourStart = TimeOnly.Parse(workRecordEditDto.HourStart);
-        var dateStart = DateOnly.Parse(workRecordEditDto.DateStart);
-        var start = new DateTime(dateStart, hourStart).ToUniversalTime();
+        mapper.Map(workRecordEditDto, workRecord);
 
-        var hourEnd = TimeOnly.Parse(workRecordEditDto.HourEnd);
-        var dateEnd = DateOnly.Parse(workRecordEditDto.DateEnd);
-        var end = new DateTime(dateEnd, hourEnd).ToUniversalTime();
-
-        if (start > end || start.AddHours(14) < end)
-            return BadRequest("Dates validation error");
-
-        workRecord.Start = start;
-        workRecord.End = end;
+        if (workRecord.Start > workRecord.End)
+            return BadRequest("Start date cannot be later than end date");
+        if (workRecord.Start.AddHours(14) < workRecord.End)
+            return BadRequest("Work record cannot last longer than 14 hours");
 
         if (await workRecordRepository.Complete()) return Ok(mapper.Map<WorkRecordDto>(workRecord));
         return BadRequest("Failed to edit work record");

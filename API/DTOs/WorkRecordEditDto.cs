@@ -5,14 +5,8 @@ namespace API.DTOs;
 public class WorkRecordEditDto
 {
     [Required]
-    public required string HourStart { get; set; }
+    public required DateTime Start { get; set; }
 
     [Required]
-    public required string DateStart { get; set; }
-
-    [Required]
-    public required string HourEnd { get; set; }
-
-    [Required]
-    public required string DateEnd { get; set; }
+    public required DateTime End { get; set; }
 }

@@ -21,6 +21,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<WorkShiftCreateDto, WorkShift>();
         CreateMap<WorkShiftEditDto, WorkShift>();
         CreateMap<WorkRecord, WorkRecordDto>();
+        CreateMap<WorkRecordEditDto, WorkRecord>();
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<string, TimeOnly>().ConvertUsing(s => TimeOnly.Parse(s));
