@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -19,11 +20,53 @@ public class WorkShiftRepository(DataContext context, IMapper mapper) : IWorkShi
         context.WorkShifts.Remove(workShift);
     }
 
-    public async Task<IEnumerable<WorkShiftDto>> GetWorkShiftsAsync()
+    public async Task<PagedList<WorkShiftDto>> GetWorkShiftsAsync(WorkShiftParams workShiftParams)
     {
-        return await context.WorkShifts
-            .ProjectTo<WorkShiftDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.WorkShifts.AsQueryable();
+
+        if (workShiftParams.WorkShiftId != 0)
+        {
+            query = query.Where(x => x.Id == workShiftParams.WorkShiftId);
+        }
+
+        if (workShiftParams.EmployeeId != 0)
+        {
+            query = query.Where(x => x.EmployeeId == workShiftParams.EmployeeId);
+        }
+
+        if (workShiftParams.Date != null)
+        {
+            var date = DateOnly.Parse(workShiftParams.Date);
+            
+            query = query.Where(x => x.Date == date);
+        }
+
+        if (workShiftParams.DateFrom != null)
+        {
+            var dateFrom = DateTime.SpecifyKind(DateTime.Parse(workShiftParams.DateFrom), 
+                DateTimeKind.Utc);
+            
+            query = query.Where(x => x.Start >= dateFrom);
+        }
+
+        if (workShiftParams.DateTo != null)
+        {
+            var dateTo = DateTime.SpecifyKind(DateTime.Parse(workShiftParams.DateTo), 
+                DateTimeKind.Utc);
+            
+            query = query.Where(x => x.Start <= dateTo);
+        }
+
+        query = workShiftParams.OrderBy switch
+        {
+            "oldest" => query.OrderBy(x => x.Id),
+            "newest" => query.OrderByDescending(x => x.Id),
+            _ => query.OrderBy(x => x.Id),
+        };
+
+        return await PagedList<WorkShiftDto>.CreateAsync(
+            query.ProjectTo<WorkShiftDto>(mapper.ConfigurationProvider), 
+            workShiftParams.PageNumber, workShiftParams.PageSize);
     }
 
     public async Task<WorkShift?> GetWorkShiftByIdAsync(int workShiftId)

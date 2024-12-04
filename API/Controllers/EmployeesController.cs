@@ -1,5 +1,7 @@
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +13,12 @@ namespace API.Controllers;
 public class EmployeesController(IEmployeeRepository employeeRepository, IMapper mapper) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
+    public async Task<ActionResult<PagedList<EmployeeDto>>> GetEmployees(
+        [FromQuery] EmployeeParams employeeParams)
     {
-        var employees = await employeeRepository.GetEmployeesAsync();
+        var employees = await employeeRepository.GetEmployeesAsync(employeeParams);
+        Response.AddPaginationHeader(employees);
+        
         return Ok(employees);
     }
 

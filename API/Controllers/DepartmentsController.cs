@@ -1,5 +1,7 @@
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +14,12 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     IMapper mapper) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DepartmentDto>>> GetDepartments()
+    public async Task<ActionResult<PagedList<DepartmentDto>>> GetDepartments(
+        [FromQuery] DepartmentParams departmentParams)
     {
-        var departments = await departmentRepository.GetDepartmentsAsync();
+        var departments = await departmentRepository.GetDepartmentsAsync(departmentParams);
+        Response.AddPaginationHeader(departments);
+        
         return Ok(departments);
     }
 

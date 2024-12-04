@@ -1,5 +1,7 @@
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +14,12 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     IEmployeeRepository employeeRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<WorkShiftDto>>> GetWorkShifts()
+    public async Task<ActionResult<PagedList<WorkShiftDto>>> GetWorkShifts(
+        [FromQuery] WorkShiftParams workShiftParams)
     {
-        var workShifts = await workShiftRepository.GetWorkShiftsAsync();
+        var workShifts = await workShiftRepository.GetWorkShiftsAsync(workShiftParams);
+        Response.AddPaginationHeader(workShifts);
+        
         return Ok(workShifts);
     }
 

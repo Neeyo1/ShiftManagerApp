@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -19,11 +20,32 @@ public class DepartmentRepository(DataContext context, IMapper mapper) : IDepart
         context.Departments.Remove(department);
     }
 
-    public async Task<IEnumerable<DepartmentDto>> GetDepartmentsAsync()
+    public async Task<PagedList<DepartmentDto>> GetDepartmentsAsync(DepartmentParams departmentParams)
     {
-        return await context.Departments
-            .ProjectTo<DepartmentDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Departments.AsQueryable();
+
+        if (departmentParams.DepartmentId != 0)
+        {
+            query = query.Where(x => x.Id == departmentParams.DepartmentId);
+        }
+
+        if (departmentParams.Name != null)
+        {
+            query = query.Where(x => x.Name == departmentParams.Name);
+        }
+
+        query = departmentParams.OrderBy switch
+        {
+            "name" => query.OrderBy(x => x.Name),
+            "name-desc" => query.OrderByDescending(x => x.Name),
+            "most-employees" => query.OrderByDescending(x => x.Employees.Count),
+            "least-employees" => query.OrderBy(x => x.Employees.Count),
+            _ => query.OrderBy(x => x.Name)
+        };
+
+        return await PagedList<DepartmentDto>.CreateAsync(
+            query.ProjectTo<DepartmentDto>(mapper.ConfigurationProvider), 
+            departmentParams.PageNumber, departmentParams.PageSize);
     }
 
     public async Task<Department?> GetDepartmentByIdAsync(int departmentId)

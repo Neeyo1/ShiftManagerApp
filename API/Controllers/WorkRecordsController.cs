@@ -1,5 +1,7 @@
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +14,12 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
 {
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<WorkRecordDto>>> GetWorkRecords()
+    public async Task<ActionResult<PagedList<WorkRecordDto>>> GetWorkRecords(
+        [FromQuery] WorkRecordParams workRecordParams)
     {
-        var workRecords = await workRecordRepository.GetWorkRecordsAsync();
+        var workRecords = await workRecordRepository.GetWorkRecordsAsync(workRecordParams);
+        Response.AddPaginationHeader(workRecords);
+
         return Ok(workRecords);
     }
 
@@ -31,6 +36,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     [HttpPost]
     public async Task<ActionResult<WorkRecordDto>> CreateWorkRecord([FromQuery] int employeeId)
     {
+        //Todo Cooldown between actions
         var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return NotFound();
 
@@ -52,7 +58,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
             if (timeNow >= workRecord.Start.AddHours(12)) //employee forgot to register leave
             {
                 workRecord.End = workRecord.Start.AddHours(8);
-                workRecord.MinutesInWork = (int)(workRecord.End.Value - workRecord.Start).TotalMinutes;
+                workRecord.MinutesInWork = Math.Ceiling((workRecord.End.Value - workRecord.Start).TotalMinutes);
 
                 var newWorkRecord = new WorkRecord
                 {
@@ -66,7 +72,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
             else //employee left normally
             {
                 workRecord.End = timeNow;
-                workRecord.MinutesInWork = (int)(workRecord.End.Value - workRecord.Start).TotalMinutes;
+                workRecord.MinutesInWork = Math.Ceiling((workRecord.End.Value - workRecord.Start).TotalMinutes);
                 if (await workRecordRepository.Complete()) return Ok($"Bye {employee.FirstName}");
             }
         }
