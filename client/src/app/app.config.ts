@@ -9,11 +9,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { jwtInterceptor } from './_interceptors/jwt.interceptor';
 import { errorInterceptor } from './_interceptors/error.interceptor';
+import { loadingInterceptor } from './_interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor, loadingInterceptor])),
     provideAnimations(),
     provideToastr({
       positionClass: 'toast-bottom-right'

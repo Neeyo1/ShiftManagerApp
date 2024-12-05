@@ -9,6 +9,8 @@ import { WorkShiftListComponent } from './work-shift/work-shift-list/work-shift-
 import { WorkShiftDetailComponent } from './work-shift/work-shift-detail/work-shift-detail.component';
 import { WorkRecordListComponent } from './work-record/work-record-list/work-record-list.component';
 import { WorkRecordDetailComponent } from './work-record/work-record-detail/work-record-detail.component';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -27,5 +29,7 @@ export const routes: Routes = [
             {path: 'workrecords/:id', component: WorkRecordDetailComponent},
         ]
     },
+    {path: 'not-found', component: NotFoundComponent},
+    {path: 'server-error', component: ServerErrorComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'},
 ];
