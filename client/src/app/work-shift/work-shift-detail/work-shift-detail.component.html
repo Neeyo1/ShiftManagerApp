@@ -1,1 +1,22 @@
-<p>work-shift-detail works!</p>
+<div>
+    <tabset>
+        <tab heading="Work shift details">
+            <p>Work shift id: {{workShift()?.id}}</p>
+            <p>Work shift date: {{workShift()?.date}}</p>
+            <p>Work shift from - to: {{workShift()?.start}} - {{workShift()?.end}}</p>
+        </tab>
+        <tab heading="Employee details" (selectTab)="loadEmployee(workShift()!.employeeId)">
+            <p>Employee id: {{employee()?.id}}</p>
+            <p>Department id: {{employee()?.departmentId}}</p>
+            <p>Employee name: {{employee()?.firstName}} {{employee()?.firstName}}</p>
+            <p>
+                Employee status: 
+                @if (employee()?.isActive) {
+                    Active
+                } @else {
+                    Not-active
+                }
+            </p>
+        </tab>
+    </tabset>
+</div>

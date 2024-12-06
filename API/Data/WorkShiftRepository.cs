@@ -57,10 +57,17 @@ public class WorkShiftRepository(DataContext context, IMapper mapper) : IWorkShi
             query = query.Where(x => x.Start <= dateTo);
         }
 
+        query = workShiftParams.Status switch
+        {
+            "going" => query.Where(x => x.End > DateTime.UtcNow),
+            "closed" => query.Where(x => x.End <= DateTime.UtcNow),
+            _ => query
+        };
+
         query = workShiftParams.OrderBy switch
         {
-            "oldest" => query.OrderBy(x => x.Id),
-            "newest" => query.OrderByDescending(x => x.Id),
+            "oldest" => query.OrderBy(x => x.Start),
+            "newest" => query.OrderByDescending(x => x.Start),
             _ => query.OrderBy(x => x.Id),
         };
 

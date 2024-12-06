@@ -4,6 +4,7 @@ export class WorkShiftParams{
     date = "";
     dateFrom = "";
     dateTo = "";
+    status = "going";
     orderBy = "oldest";
     pageNumber = 1;
     pageSize = 10;

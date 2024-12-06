@@ -1,1 +1,61 @@
-<p>work-record-list works!</p>
+<button class="btn btn-primary" (click)="showOffcanvas()">Filter</button>
+@if (accountService.roles().includes("Manager") || accountService.roles().includes("Admin")) {
+  <button (click)="createWorkRecord()" class="btn btn-primary" type="button">Create work record</button>
+}
+  
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Employee id</th>
+          <th scope="col">Start</th>
+          <th scope="col">End</th>
+          <th scope="col">Minutes</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (workRecord of workRecordService.paginatedResult()?.items; track workRecord.id) {
+              <tr>
+                  <td>{{workRecord.id}}</td>
+                  <td>{{workRecord.employeeId}}</td>
+                  <td>{{workRecord.start}}</td>
+                  <td>{{workRecord.end}}</td>
+                  <td>{{workRecord.minutesInWork}}</td>
+                  <td>
+                    <button class="btn btn-primary" 
+                            routerLink="/workrecords/{{workRecord.id}}">
+                      Details
+                    </button>
+                    @if (accountService.roles().includes("Manager")
+                        || accountService.roles().includes("Admin")) {
+                      <button class="btn btn-info" 
+                              (click)="editWorkRecord(workRecord)">
+                        Edit
+                      </button>
+                      <button class="btn btn-danger" 
+                              (click)="deleteWorkRecord(workRecord.id)">
+                        Delete
+                      </button>
+                    }
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (workRecordService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="workRecordService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="workRecordService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="workRecordService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }

@@ -1,6 +1,6 @@
 <div>
     <tabset>
-        <tab heading="Details">
+        <tab heading="Department details">
             <p>Department id: {{department()?.id}}</p>
             <p>Department name: {{department()?.name}}</p>
             <p>Department employee count: {{department()?.employeeCount}}</p>
@@ -14,7 +14,45 @@
             </p>
         </tab>
         <tab heading="Employees" (selectTab)="loadEmployees()">
-            Nothing to display yet
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">First name</th>
+                        <th scope="col">Last name</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (employee of employeeService.paginatedResult()?.items; track employee.id) {
+                    <tr>
+                        <td>{{employee.id}}</td>
+                        <td>{{employee.firstName}}</td>
+                        <td>{{employee.lastName}}</td>
+                        <td>
+                            <button class="btn btn-primary" routerLink="/employees/{{employee.id}}">
+                                Details
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            @if (employeeService.paginatedResult()?.pagination) {
+                <div class="d-flex justify-content-center">
+                    <pagination [boundaryLinks]="true" 
+                                [totalItems]="employeeService.paginatedResult()?.pagination!.totalItems"
+                                [itemsPerPage]="employeeService.paginatedResult()?.pagination!.itemsPerPage"
+                                (pageChanged)="pageChanged($event)"
+                                [(ngModel)]="employeeService.paginatedResult()?.pagination!.currentPage"
+                                [maxSize]="10"
+                                previousText="&lsaquo;" 
+                                nextText="&rsaquo;" 
+                                firstText="&laquo;" 
+                                lastText="&raquo;">
+                    </pagination>   
+                </div>
+            }
         </tab>
     </tabset>
 </div>

@@ -1,1 +1,61 @@
-<p>work-shift-list works!</p>
+<button class="btn btn-primary" (click)="showOffcanvas()">Filter</button>
+@if (accountService.roles().includes("Manager") || accountService.roles().includes("Admin")) {
+  <button (click)="createWorkShift()" class="btn btn-primary" type="button">Create work shift</button>
+}
+  
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Employee id</th>
+          <th scope="col">Date</th>
+          <th scope="col">Start</th>
+          <th scope="col">End</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (workShift of workShiftService.paginatedResult()?.items; track workShift.id) {
+              <tr>
+                  <td>{{workShift.id}}</td>
+                  <td>{{workShift.employeeId}}</td>
+                  <td>{{workShift.date}}</td>
+                  <td>{{workShift.start}}</td>
+                  <td>{{workShift.end}}</td>
+                  <td>
+                    <button class="btn btn-primary" 
+                            routerLink="/workshifts/{{workShift.id}}">
+                      Details
+                    </button>
+                    @if (accountService.roles().includes("Manager")
+                        || accountService.roles().includes("Admin")) {
+                      <button class="btn btn-info" 
+                              (click)="editWorkShift(workShift)">
+                        Edit
+                      </button>
+                      <button class="btn btn-danger" 
+                              (click)="deleteWorkShift(workShift.id)">
+                        Delete
+                      </button>
+                    }
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (workShiftService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="workShiftService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="workShiftService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="workShiftService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }

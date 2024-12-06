@@ -1,1 +1,113 @@
-<p>employee-detail works!</p>
+<div>
+    <tabset>
+        <tab heading="Employee details">
+            <p>Employee id: {{employee()?.id}}</p>
+            <p>Employee name: {{employee()?.firstName}} {{employee()?.lastName}}</p>
+            <p>
+                Employee status:
+                @if (employee()?.isActive){
+                Active
+                } @else {
+                Not-active
+                }
+            </p>
+        </tab>
+        <tab heading="Department detail" (selectTab)="loadDepartment(employee()!.departmentId)">
+            <p>Department id: {{department()?.id}}</p>
+            <p>Department name: {{department()?.name}}</p>
+            <p>Department employee count: {{department()?.employeeCount}}</p>
+            <p>
+                Department managers:
+                @for (manager of department()?.managers; track manager.id) {
+            <p>
+                {{manager.firstName}} {{manager.lastName}}
+            </p>
+            }
+            </p>
+        </tab>
+        <tab heading="Work shifts" (selectTab)="loadWorkShifts()">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Employee id</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">End</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (workShift of workShiftService.paginatedResult()?.items; track workShift.id) {
+                    <tr>
+                        <td>{{workShift.id}}</td>
+                        <td>{{workShift.employeeId}}</td>
+                        <td>{{workShift.date}}</td>
+                        <td>{{workShift.start}}</td>
+                        <td>{{workShift.end}}</td>
+                        <td>
+                            <button class="btn btn-primary" routerLink="/workshifts/{{workShift.id}}">
+                                Details
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (workShiftService.paginatedResult()?.pagination) {
+            <div class="d-flex justify-content-center">
+                <pagination [boundaryLinks]="true"
+                    [totalItems]="workShiftService.paginatedResult()?.pagination!.totalItems"
+                    [itemsPerPage]="workShiftService.paginatedResult()?.pagination!.itemsPerPage"
+                    (pageChanged)="pageChangedWorkShift($event)"
+                    [(ngModel)]="workShiftService.paginatedResult()?.pagination!.currentPage" [maxSize]="10"
+                    previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                </pagination>
+            </div>
+            }
+        </tab>
+        <tab heading="Work records" (selectTab)="loadWorkRecords()">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Employee id</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">End</th>
+                        <th scope="col">Minutes</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (workRecord of workRecordService.paginatedResult()?.items; track workRecord.id) {
+                    <tr>
+                        <td>{{workRecord.id}}</td>
+                        <td>{{workRecord.employeeId}}</td>
+                        <td>{{workRecord.start}}</td>
+                        <td>{{workRecord.end}}</td>
+                        <td>{{workRecord.minutesInWork}}</td>
+                        <td>
+                            <button class="btn btn-primary" routerLink="/workrecords/{{workRecord.id}}">
+                                Details
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (workRecordService.paginatedResult()?.pagination) {
+            <div class="d-flex justify-content-center">
+                <pagination [boundaryLinks]="true"
+                    [totalItems]="workRecordService.paginatedResult()?.pagination!.totalItems"
+                    [itemsPerPage]="workRecordService.paginatedResult()?.pagination!.itemsPerPage"
+                    (pageChanged)="pageChangedWorkRecord($event)"
+                    [(ngModel)]="workRecordService.paginatedResult()?.pagination!.currentPage" [maxSize]="10"
+                    previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                </pagination>
+            </div>
+            }
+        </tab>
+    </tabset>
+</div>

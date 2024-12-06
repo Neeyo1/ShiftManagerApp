@@ -1,1 +1,22 @@
-<p>work-record-detail works!</p>
+<div>
+    <tabset>
+        <tab heading="Work record details">
+            <p>Work record id: {{workRecord()?.id}}</p>
+            <p>Work record from - to: {{workRecord()?.start}} - {{workRecord()?.end}}</p>
+            <p>Work record length: {{workRecord()?.minutesInWork}} minute(s)</p>
+        </tab>
+        <tab heading="Employee details" (selectTab)="loadEmployee(workRecord()!.employeeId)">
+            <p>Employee id: {{employee()?.id}}</p>
+            <p>Department id: {{employee()?.departmentId}}</p>
+            <p>Employee name: {{employee()?.firstName}} {{employee()?.firstName}}</p>
+            <p>
+                Employee status: 
+                @if (employee()?.isActive) {
+                    Active
+                } @else {
+                    Not-active
+                }
+            </p>
+        </tab>
+    </tabset>
+</div>
