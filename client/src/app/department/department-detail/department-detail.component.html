@@ -1,1 +1,20 @@
-<p>department-detail works!</p>
+<div>
+    <tabset>
+        <tab heading="Details">
+            <p>Department id: {{department()?.id}}</p>
+            <p>Department name: {{department()?.name}}</p>
+            <p>Department employee count: {{department()?.employeeCount}}</p>
+            <p>
+                Department managers: 
+                @for (manager of department()?.managers; track manager.id) {
+                    <p>
+                        {{manager.firstName}} {{manager.lastName}}
+                    </p>
+                }
+            </p>
+        </tab>
+        <tab heading="Employees" (selectTab)="loadEmployees()">
+            Nothing to display yet
+        </tab>
+    </tabset>
+</div>

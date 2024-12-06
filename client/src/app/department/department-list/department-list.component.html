@@ -1,1 +1,64 @@
-<p>department-list works!</p>
+<button class="btn btn-primary" (click)="showOffcanvas()">Filter</button>
+@if (accountService.roles().includes("Admin")) {
+  <button (click)="createDepartment()" class="btn btn-primary" type="button">Create department</button>
+}
+  
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Employee count</th>
+          <th scope="col">Managers</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (department of departmentService.paginatedResult()?.items; track department.id) {
+              <tr>
+                  <td>{{department.id}}</td>
+                  <td>{{department.name}}</td>
+                  <td>{{department.employeeCount}}</td>
+                  <td>
+                    @for (manager of department.managers; track manager.id) {
+                        <p>
+                            {{manager.firstName}} {{manager.lastName}}
+                        </p>
+                    }
+                  </td>
+                  <td>
+                    <button class="btn btn-primary" 
+                            routerLink="/departments/{{department.id}}">
+                      Details
+                    </button>
+                    @if (accountService.roles().includes("Admin")) {
+                      <button class="btn btn-info" 
+                              (click)="editDepartment(department)">
+                        Edit
+                      </button>
+                      <button class="btn btn-danger" 
+                              (click)="deleteDepartment(department.id)">
+                        Delete
+                      </button>
+                    }
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (departmentService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="departmentService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="departmentService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="departmentService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }
