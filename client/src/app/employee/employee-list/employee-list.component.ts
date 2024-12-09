@@ -6,6 +6,7 @@ import { Employee } from '../../_models/employee';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -18,6 +19,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
   employeeService = inject(EmployeeService);
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
+  private myModalService = inject(ModalService);
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -32,11 +34,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
   }
 
   createEmployee(){
-    this.toastrService.info("create employee modal");
+    this.myModalService.openCreateEmployeeModal();
   }
 
   editEmployee(employee: Employee){
-    this.toastrService.info("edit employee modal");
+    this.myModalService.openEditEmployeeModal(employee);
   }
 
   deleteEmployee(employeeId: number){

@@ -6,6 +6,9 @@ import { ChangePasswordModalComponent } from '../modals/change-password-modal/ch
 import { DepartmentModalComponent } from '../modals/department-modal/department-modal.component';
 import { DepartmentService } from './department.service';
 import { Department } from '../_models/department';
+import { EmployeeModalComponent } from '../modals/employee-modal/employee-modal.component';
+import { EmployeeService } from './employee.service';
+import { Employee } from '../_models/employee';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +19,7 @@ export class ModalService {
   private accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private departmentService = inject(DepartmentService);
+  private employeeService = inject(EmployeeService);
 
   openChangePasswordModal(){
     const config: ModalOptions = {
@@ -74,6 +78,48 @@ export class ModalService {
           let departmentForm = this.bsModalRef.content.departmentForm;
           this.departmentService.editDepartment(department.id, departmentForm.value).subscribe({
             next: _ => this.departmentService.getDepartments()
+          })
+        }
+      }
+    })
+  }
+
+  openCreateEmployeeModal(){
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false
+      }
+    };
+    this.bsModalRef = this.modalService.show(EmployeeModalComponent, config);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let employeeForm = this.bsModalRef.content.employeeForm;
+          this.employeeService.createEmployee(employeeForm.value).subscribe({
+            next: _ => this.employeeService.getEmployees()
+          })
+        }
+      }
+    })
+  }
+
+  openEditEmployeeModal(employee: Employee){
+    if (employee == null) return;
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false,
+        employee: employee
+      }
+    };
+    this.bsModalRef = this.modalService.show(EmployeeModalComponent, config);
+    return this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let employeeForm = this.bsModalRef.content.employeeForm;
+          this.employeeService.editEmployee(employee.id, employeeForm.value).subscribe({
+            next: _ => this.employeeService.getEmployees()
           })
         }
       }
