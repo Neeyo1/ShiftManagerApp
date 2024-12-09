@@ -1,0 +1,78 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary">
+            @if (workShift) {
+            Edit work shift
+            } @else {
+            Create work shift
+            }
+        </h4>
+        <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="col-8">
+                <form [formGroup]="workShiftForm" id="workShiftForm" (ngSubmit)="complete()" autocomplete="off">
+                    @if (!workShift) {
+                        <app-date-picker
+                            [formControl]="$any(workShiftForm.controls['dateFrom'])"
+                            [label]="'Date from'"
+                        ></app-date-picker>
+
+                        <app-date-picker
+                            [formControl]="$any(workShiftForm.controls['dateTo'])"
+                            [label]="'Date to'"
+                        ></app-date-picker>
+                    } @else {
+                        <app-date-picker
+                            [formControl]="$any(workShiftForm.controls['startDate'])"
+                            [label]="'Start date'"
+                        ></app-date-picker>
+                    }
+
+                    <app-text-input 
+                        [formControl]="$any(workShiftForm.controls['startHour'])"
+                        [label]="'Start hour'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    <app-text-input 
+                        [formControl]="$any(workShiftForm.controls['startMinute'])"
+                        [label]="'Start minute'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    <app-text-input 
+                        [formControl]="$any(workShiftForm.controls['shiftLength'])"
+                        [label]="'Shift length'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    <app-text-input 
+                        [formControl]="$any(workShiftForm.controls['employeeId'])"
+                        [label]="'Employee ID'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    @if (validationErrors) {
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            @for (error of validationErrors; track $index) {
+                            <li>{{error}}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Close</button>
+        <button class="btn btn-primary" 
+                form="workShiftForm"
+                [disabled]="!workShiftForm.valid">
+            Save changes
+        </button>
+    </div>
+</div>

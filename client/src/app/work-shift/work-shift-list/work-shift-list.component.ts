@@ -6,6 +6,7 @@ import { WorkShift } from '../../_models/workShift';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-work-shift-list',
@@ -18,6 +19,7 @@ export class WorkShiftListComponent implements OnInit, OnDestroy{
   workShiftService = inject(WorkShiftService);
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
+  private myModalService = inject(ModalService);
 
   ngOnInit(): void {
     this.loadWorkShifts();
@@ -32,11 +34,11 @@ export class WorkShiftListComponent implements OnInit, OnDestroy{
   }
 
   createWorkShift(){
-    this.toastrService.info("create workShift modal");
+    this.myModalService.openCreateWorkShiftModal();
   }
 
   editWorkShift(workShift: WorkShift){
-    this.toastrService.info("edit workShift modal");
+    this.myModalService.openEditWorkShiftModal(workShift);
   }
 
   deleteWorkShift(workShiftId: number){
