@@ -19,9 +19,9 @@
               <tr>
                   <td>{{workShift.id}}</td>
                   <td>{{workShift.employeeId}}</td>
-                  <td>{{workShift.date}}</td>
-                  <td>{{workShift.start}}</td>
-                  <td>{{workShift.end}}</td>
+                  <td>{{workShift.date | date:'d/MM/yyyy'}}</td>
+                  <td>{{workShift.start | date:'d/MM/yyyy H:mm'}}</td>
+                  <td>{{workShift.end | date:'d/MM/yyyy H:mm'}}</td>
                   <td>
                     <button class="btn btn-primary" 
                             routerLink="/workshifts/{{workShift.id}}">

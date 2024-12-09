@@ -7,11 +7,12 @@ import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '../../_services/modal.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-work-shift-list',
   standalone: true,
-  imports: [RouterLink, PaginationModule, FormsModule],
+  imports: [RouterLink, PaginationModule, FormsModule, DatePipe],
   templateUrl: './work-shift-list.component.html',
   styleUrl: './work-shift-list.component.css'
 })

@@ -2,7 +2,8 @@
     <tabset>
         <tab heading="Work record details">
             <p>Work record id: {{workRecord()?.id}}</p>
-            <p>Work record from - to: {{workRecord()?.start}} - {{workRecord()?.end}}</p>
+            <p>Work record from - to: {{workRecord()?.start | date:'d/MM/yyyy H:mm'}} - 
+                {{workRecord()?.end | date:'d/MM/yyyy H:mm'}}</p>
             <p>Work record length: {{workRecord()?.minutesInWork}} minute(s)</p>
         </tab>
         <tab heading="Employee details" (selectTab)="loadEmployee(workRecord()!.employeeId)">

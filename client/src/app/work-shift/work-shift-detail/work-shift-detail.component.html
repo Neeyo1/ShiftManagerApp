@@ -2,8 +2,9 @@
     <tabset>
         <tab heading="Work shift details">
             <p>Work shift id: {{workShift()?.id}}</p>
-            <p>Work shift date: {{workShift()?.date}}</p>
-            <p>Work shift from - to: {{workShift()?.start}} - {{workShift()?.end}}</p>
+            <p>Work shift date: {{workShift()?.date | date:'d/MM/yyyy'}}</p>
+            <p>Work shift from - to: {{workShift()?.start | date:'d/MM/yyyy H:mm'}} - 
+                {{workShift()?.end | date:'d/MM/yyyy H:mm'}}</p>
         </tab>
         <tab heading="Employee details" (selectTab)="loadEmployee(workShift()!.employeeId)">
             <p>Employee id: {{employee()?.id}}</p>

@@ -6,11 +6,12 @@ import { AccountService } from '../../_services/account.service';
 import { WorkShift } from '../../_models/workShift';
 import { Employee } from '../../_models/employee';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-work-shift-detail',
   standalone: true,
-  imports: [TabsModule, RouterLink],
+  imports: [TabsModule, RouterLink, DatePipe],
   templateUrl: './work-shift-detail.component.html',
   styleUrl: './work-shift-detail.component.css'
 })

@@ -7,11 +7,12 @@ import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '../../_services/modal.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-work-record-list',
   standalone: true,
-  imports: [RouterLink, PaginationModule, FormsModule],
+  imports: [RouterLink, PaginationModule, FormsModule, DatePipe],
   templateUrl: './work-record-list.component.html',
   styleUrl: './work-record-list.component.css'
 })

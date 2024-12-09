@@ -6,11 +6,12 @@ import { AccountService } from '../../_services/account.service';
 import { WorkRecord } from '../../_models/workRecord';
 import { Employee } from '../../_models/employee';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-work-record-detail',
   standalone: true,
-  imports: [TabsModule, RouterLink],
+  imports: [TabsModule, RouterLink, DatePipe],
   templateUrl: './work-record-detail.component.html',
   styleUrl: './work-record-detail.component.css'
 })

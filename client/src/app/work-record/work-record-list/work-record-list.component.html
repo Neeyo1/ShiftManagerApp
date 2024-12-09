@@ -16,8 +16,8 @@
               <tr>
                   <td>{{workRecord.id}}</td>
                   <td>{{workRecord.employeeId}}</td>
-                  <td>{{workRecord.start}}</td>
-                  <td>{{workRecord.end}}</td>
+                  <td>{{workRecord.start | date:'d/MM/yyyy H:mm'}}</td>
+                  <td>{{workRecord.end | date:'d/MM/yyyy H:mm'}}</td>
                   <td>{{workRecord.minutesInWork}}</td>
                   <td>
                     <button class="btn btn-primary" 

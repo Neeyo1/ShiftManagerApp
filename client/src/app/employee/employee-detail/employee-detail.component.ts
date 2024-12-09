@@ -12,11 +12,12 @@ import { Department } from '../../_models/department';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-employee-detail',
   standalone: true,
-  imports: [TabsModule, PaginationModule, FormsModule, RouterLink],
+  imports: [TabsModule, PaginationModule, FormsModule, RouterLink, DatePipe],
   templateUrl: './employee-detail.component.html',
   styleUrl: './employee-detail.component.css'
 })
