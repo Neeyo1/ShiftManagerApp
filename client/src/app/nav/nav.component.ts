@@ -4,6 +4,7 @@ import { AccountService } from '../_services/account.service';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { ModalService } from '../_services/modal.service';
 
 @Component({
   selector: 'app-nav',
@@ -16,7 +17,7 @@ export class NavComponent {
   model: any = {};
   accountService = inject(AccountService);
   private router = inject(Router);
-  private toastrService = inject(ToastrService);
+  private myModalService = inject(ModalService);
 
   login(){
     this.accountService.login(this.model).subscribe({
@@ -33,6 +34,6 @@ export class NavComponent {
   }
 
   changePassword(){
-    this.toastrService.info("Change password modal")
+    this.myModalService.openChangePasswordModal();
   }
 }
