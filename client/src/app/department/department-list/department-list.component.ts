@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { Department } from '../../_models/department';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-department-list',
@@ -18,6 +19,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
   departmentService = inject(DepartmentService);
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
+  private myModalService = inject(ModalService);
 
   ngOnInit(): void {
     this.loadDepartments();
@@ -32,11 +34,11 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
   }
 
   createDepartment(){
-    this.toastrService.info("create department modal");
+    this.myModalService.openCreateDepartmentModal();
   }
 
   editDepartment(department: Department){
-    this.toastrService.info("edit department modal");
+    this.myModalService.openEditDepartmentModal(department);
   }
 
   deleteDepartment(departmentId: number){

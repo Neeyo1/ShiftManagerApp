@@ -8,7 +8,7 @@
     <label>{{label()}}</label>
     @if (control.hasError('required')) {
         <div class="invalid-feedback text start">
-            {{label()}} must contain at least one character
+            {{label()}} cannot be empty
         </div>
     }
     @if (control.hasError('minlength')) {
