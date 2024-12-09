@@ -1,0 +1,71 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary">
+            @if (workRecord) {
+            Edit work record
+            } @else {
+            Create work record
+            }
+        </h4>
+        <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="col-8">
+                <form [formGroup]="workRecordForm" id="workRecordForm" (ngSubmit)="complete()" autocomplete="off">
+                    <app-date-picker
+                        [formControl]="$any(workRecordForm.controls['startDate'])"
+                        [label]="'Start date'">
+                    </app-date-picker>
+
+                    <app-text-input 
+                        [formControl]="$any(workRecordForm.controls['startHour'])"
+                        [label]="'Start hour'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    <app-text-input 
+                        [formControl]="$any(workRecordForm.controls['startMinute'])"
+                        [label]="'Start minute'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    <app-date-picker
+                        [formControl]="$any(workRecordForm.controls['endDate'])"
+                        [label]="'End date'">
+                    </app-date-picker>
+
+                    <app-text-input 
+                        [formControl]="$any(workRecordForm.controls['endHour'])"
+                        [label]="'End hour'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    <app-text-input 
+                        [formControl]="$any(workRecordForm.controls['endMinute'])"
+                        [label]="'End minute'"
+                        [type]="'number'">
+                    </app-text-input>
+
+                    @if (validationErrors) {
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            @for (error of validationErrors; track $index) {
+                            <li>{{error}}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Close</button>
+        <button class="btn btn-primary" 
+                form="workRecordForm"
+                [disabled]="!workRecordForm.valid">
+            Save changes
+        </button>
+    </div>
+</div>

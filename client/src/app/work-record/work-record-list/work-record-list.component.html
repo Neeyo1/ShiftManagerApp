@@ -1,7 +1,4 @@
 <button class="btn btn-primary" (click)="showOffcanvas()">Filter</button>
-@if (accountService.roles().includes("Manager") || accountService.roles().includes("Admin")) {
-  <button (click)="createWorkRecord()" class="btn btn-primary" type="button">Create work record</button>
-}
   
   <table class="table table-hover">
       <thead>

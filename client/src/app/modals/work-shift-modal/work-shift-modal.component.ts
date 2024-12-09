@@ -41,8 +41,7 @@ export class WorkShiftModalComponent implements OnInit{
           [Validators.required, Validators.min(0), Validators.max(23)]],
         startMinute: [this.workShift.start.getUTCMinutes, 
           [Validators.required, Validators.min(0), Validators.max(59)]],
-        shiftLength: [8, [Validators.required, Validators.min(1), Validators.max(12)]],
-        employeeId: [this.workShift.employeeId, [Validators.required]]
+        shiftLength: [8, [Validators.required, Validators.min(1), Validators.max(12)]]
       })
     }
   }

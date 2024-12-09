@@ -12,6 +12,9 @@ import { Employee } from '../_models/employee';
 import { WorkShiftModalComponent } from '../modals/work-shift-modal/work-shift-modal.component';
 import { WorkShiftService } from './workShift.service';
 import { WorkShift } from '../_models/workShift';
+import { WorkRecord } from '../_models/workRecord';
+import { WorkRecordModalComponent } from '../modals/work-record-modal/work-record-modal.component';
+import { WorkRecordService } from './workRecord.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +27,7 @@ export class ModalService {
   private departmentService = inject(DepartmentService);
   private employeeService = inject(EmployeeService);
   private workShiftService = inject(WorkShiftService);
+  private workRecordService = inject(WorkRecordService);
 
   openChangePasswordModal(){
     const config: ModalOptions = {
@@ -174,6 +178,34 @@ export class ModalService {
           workShiftForm.value['start'] = time.toISOString();
           this.workShiftService.editWorkShift(workShift.id, workShiftForm.value).subscribe({
             next: _ => this.workShiftService.getWorkShifts()
+          })
+        }
+      }
+    })
+  }
+
+  openEditWorkRecordModal(workRecord: WorkRecord){
+    if (workRecord == null) return;
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false,
+        workRecord: workRecord
+      }
+    };
+    this.bsModalRef = this.modalService.show(WorkRecordModalComponent, config);
+    return this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let workRecordForm = this.bsModalRef.content.workRecordForm;
+          let start = new Date(workRecordForm.value['startDate']);
+          start.setHours(workRecordForm.value['startHour'], workRecordForm.value['startMinute'], 0);
+          workRecordForm.value['start'] = start.toISOString();
+          let end = new Date(workRecordForm.value['endDate']);
+          end.setHours(workRecordForm.value['endHour'], workRecordForm.value['endMinute'], 0);
+          workRecordForm.value['end'] = end.toISOString();
+          this.workRecordService.editWorkRecord(workRecord.id, workRecordForm.value).subscribe({
+            next: _ => this.workRecordService.getWorkRecords()
           })
         }
       }

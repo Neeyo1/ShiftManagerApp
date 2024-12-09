@@ -6,6 +6,7 @@ import { WorkRecord } from '../../_models/workRecord';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-work-record-list',
@@ -18,6 +19,7 @@ export class WorkRecordListComponent implements OnInit, OnDestroy{
   workRecordService = inject(WorkRecordService);
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
+  private myModalService = inject(ModalService);
 
   ngOnInit(): void {
     this.loadWorkRecords();
@@ -31,12 +33,8 @@ export class WorkRecordListComponent implements OnInit, OnDestroy{
     this.workRecordService.getWorkRecords();
   }
 
-  createWorkRecord(){
-    this.toastrService.info("create work record modal");
-  }
-
   editWorkRecord(workRecord: WorkRecord){
-    this.toastrService.info("edit work record modal");
+    this.myModalService.openEditWorkRecordModal(workRecord);
   }
 
   deleteWorkRecord(workRecordId: number){

@@ -23,6 +23,12 @@
                             [formControl]="$any(workShiftForm.controls['dateTo'])"
                             [label]="'Date to'"
                         ></app-date-picker>
+
+                        <app-text-input 
+                            [formControl]="$any(workShiftForm.controls['employeeId'])"
+                            [label]="'Employee ID'"
+                            [type]="'number'">
+                        </app-text-input>
                     } @else {
                         <app-date-picker
                             [formControl]="$any(workShiftForm.controls['startDate'])"
@@ -45,12 +51,6 @@
                     <app-text-input 
                         [formControl]="$any(workShiftForm.controls['shiftLength'])"
                         [label]="'Shift length'"
-                        [type]="'number'">
-                    </app-text-input>
-
-                    <app-text-input 
-                        [formControl]="$any(workShiftForm.controls['employeeId'])"
-                        [label]="'Employee ID'"
                         [type]="'number'">
                     </app-text-input>
 
