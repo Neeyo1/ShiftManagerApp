@@ -23,6 +23,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<WorkRecord, WorkRecordDto>();
         CreateMap<WorkRecordEditDto, WorkRecord>();
         CreateMap<Summary, SummaryDto>();
+        CreateMap<Notification, NotificationDto>();
+        CreateMap<Notification, NotificationDetailedDto>();
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<string, TimeOnly>().ConvertUsing(s => TimeOnly.Parse(s));

@@ -15,4 +15,7 @@ public class AppUser : IdentityUser<int>
     //AppUser - Department
     public int? DepartmentId { get; set; }
     public Department? Department { get; set; }
+
+    //AppUser - Notification
+    public ICollection<Notification> Notifications { get; set; } = [];
 }
