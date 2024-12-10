@@ -8,8 +8,6 @@ public class Notification
     public bool IsRead { get; set; }
 
     //Notifiction - AppUser
-    public int SenderId { get; set; }
-    public AppUser Sender { get; set; } = null!;
-    public int RecipientId { get; set; }
-    public AppUser Recipient { get; set; } = null!;
+    public int UserId { get; set; }
+    public AppUser User { get; set; } = null!;
 }
