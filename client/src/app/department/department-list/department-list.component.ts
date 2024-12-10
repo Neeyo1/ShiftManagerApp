@@ -7,6 +7,8 @@ import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { Department } from '../../_models/department';
 import { ModalService } from '../../_services/modal.service';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { DepartmentFilterComponent } from '../../offcanvas/department-filter/department-filter.component';
 
 @Component({
   selector: 'app-department-list',
@@ -20,6 +22,7 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private myModalService = inject(ModalService);
+  private offcanvasService = inject(NgbOffcanvas);
 
   ngOnInit(): void {
     this.loadDepartments();
@@ -59,6 +62,6 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
   }
 
   showOffcanvas() {
-		this.toastrService.info("filtering offcanvas");
+		this.offcanvasService.open(DepartmentFilterComponent);
 	}
 }

@@ -1,0 +1,53 @@
+<div class="offcanvas-header">
+    <h4 class="offcanvas-title" id="offcanvas-basic-title">Filter results</h4>
+    <button type="button" class="btn-close" (click)="activeOffcanvas.dismiss()"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="d-flex">
+      <form #form="ngForm" class="mx-auto" style="width: 80%;" (ngSubmit)="loadDepartments()" autocomplete="off">
+          <div class="mb-3 form-floating">
+            <input 
+                type="number"
+                class="form-control"
+                name="departmentId"
+                placeholder="Department ID"
+                [(ngModel)]="departmentService.departmentParams().departmentId">
+            <label>Department ID</label>
+          </div>
+
+          <div class="mb-3 form-floating">
+            <input 
+                type="text"
+                class="form-control"
+                name="name"
+                placeholder="Name"
+                [(ngModel)]="departmentService.departmentParams().name">
+            <label>Name</label>
+          </div>
+
+          <div class="mb-3 form-floating">
+            <select name="orderBy"
+                class="form-select" 
+                [(ngModel)]="departmentService.departmentParams().orderBy"
+            >
+            @for (orderBy of orderByList; track orderBy.value) {
+                <option [value]="orderBy.value">{{orderBy.display}}</option>
+            }
+            </select>
+            <label>Order by</label>
+          </div>
+
+          <div class="form-group text-center">
+              <button class="btn btn-primary" type="submit">
+                Filter
+              </button>
+              <button (click)="resetFilters()" class="btn btn-primary" type="button">
+                Reset
+              </button>
+              <button (click)="closeOffcanvas(activeOffcanvas)" class="btn btn-primary" type="button">
+                Close
+              </button>
+          </div>
+      </form>
+    </div>
+  </div>
