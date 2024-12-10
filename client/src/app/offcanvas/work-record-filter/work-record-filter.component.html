@@ -1,0 +1,83 @@
+<div class="offcanvas-header">
+    <h4 class="offcanvas-title" id="offcanvas-basic-title">Filter results</h4>
+    <button type="button" class="btn-close" (click)="activeOffcanvas.dismiss()"></button>
+</div>
+<div class="offcanvas-body">
+    <div class="d-flex">
+        <form #form="ngForm" class="mx-auto" style="width: 80%;" (ngSubmit)="loadWorkRecords()" autocomplete="off">
+            <div class="mb-3 form-floating">
+                <input type="number" 
+                       class="form-control" 
+                       name="employeeId" 
+                       placeholder="Employee ID"
+                       [(ngModel)]="workRecordService.workRecordParams().employeeId">
+                <label>Employee ID</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <input type="number" 
+                       class="form-control" 
+                       name="workRecordId" 
+                       placeholder="Work record ID"
+                       [(ngModel)]="workRecordService.workRecordParams().workRecordId">
+                <label>Work record ID</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <input 
+                    class="form-control" 
+                    name="dateFrom"
+                    placeholder="Date from"
+                    bsDatepicker
+                    [bsConfig]="bsConfig"
+                    [(ngModel)]="workRecordService.workRecordParams().dateFrom">
+                <label>Date from</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <input 
+                    class="form-control" 
+                    name="dateTo"
+                    placeholder="Date to"
+                    bsDatepicker
+                    [bsConfig]="bsConfig"
+                    [(ngModel)]="workRecordService.workRecordParams().dateTo">
+                <label>Date to</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <select name="status" 
+                        class="form-select" 
+                        [(ngModel)]="workRecordService.workRecordParams().status">
+                    @for (status of statusList; track status.value) {
+                        <option [value]="status.value">{{status.display}}</option>
+                    }
+                </select>
+                <label>Status</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <select name="orderBy" 
+                        class="form-select" 
+                        [(ngModel)]="workRecordService.workRecordParams().orderBy">
+                    @for (orderBy of orderByList; track orderBy.value) {
+                        <option [value]="orderBy.value">{{orderBy.display}}</option>
+                    }
+                </select>
+                <label>Order by</label>
+            </div>
+
+            <div class="form-group text-center">
+                <button class="btn btn-primary" type="submit">
+                    Filter
+                </button>
+                <button (click)="resetFilters()" class="btn btn-primary" type="button">
+                    Reset
+                </button>
+                <button (click)="closeOffcanvas(activeOffcanvas)" class="btn btn-primary" type="button">
+                    Close
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

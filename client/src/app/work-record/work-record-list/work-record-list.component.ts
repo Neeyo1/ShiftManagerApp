@@ -8,6 +8,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '../../_services/modal.service';
 import { DatePipe } from '@angular/common';
+import { WorkRecordFilterComponent } from '../../offcanvas/work-record-filter/work-record-filter.component';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-work-record-list',
@@ -21,6 +23,7 @@ export class WorkRecordListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private myModalService = inject(ModalService);
+  private offcanvasService = inject(NgbOffcanvas);
 
   ngOnInit(): void {
     this.loadWorkRecords();
@@ -42,11 +45,6 @@ export class WorkRecordListComponent implements OnInit, OnDestroy{
     this.toastrService.info("Delete modal")
   }
 
-  resetFilters(){
-    this.workRecordService.resetWorkRecordParams();
-    this.loadWorkRecords();
-  }
-
   pageChanged(event: any){
     if (this.workRecordService.workRecordParams().pageNumber != event.page){
       this.workRecordService.workRecordParams().pageNumber = event.page;
@@ -56,6 +54,6 @@ export class WorkRecordListComponent implements OnInit, OnDestroy{
   }
 
   showOffcanvas() {
-		this.toastrService.info("filtering offcanvas");
+		this.offcanvasService.open(WorkRecordFilterComponent);
 	}
 }
