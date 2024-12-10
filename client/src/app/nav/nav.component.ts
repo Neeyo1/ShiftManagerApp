@@ -5,6 +5,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '../_services/modal.service';
+import { NotificationService } from '../_services/notification.service';
 
 @Component({
   selector: 'app-nav',
@@ -16,6 +17,7 @@ import { ModalService } from '../_services/modal.service';
 export class NavComponent {
   model: any = {};
   accountService = inject(AccountService);
+  notificationService = inject(NotificationService);
   private router = inject(Router);
   private myModalService = inject(ModalService);
 

@@ -3,6 +3,8 @@ import { RouterOutlet } from '@angular/router';
 import { NavComponent } from "./nav/nav.component";
 import { AccountService } from './_services/account.service';
 import { NgxSpinnerComponent } from 'ngx-spinner';
+import { NotificationService } from './_services/notification.service';
+import { NotificationParams } from './_models/notificationParams';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +15,7 @@ import { NgxSpinnerComponent } from 'ngx-spinner';
 })
 export class AppComponent implements OnInit{
   private accountService = inject(AccountService);
+  notificationService = inject(NotificationService);
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -27,10 +30,15 @@ export class AppComponent implements OnInit{
       return;
     }
     this.accountService.setCurrentUser(user);
+    this.getUnreadMessages();
   }
 
   private tokenExpired(token: string) {
     const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
     return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+  }
+
+  getUnreadMessages(){
+    this.notificationService.getUnreadNotificationsCount();
   }
 }

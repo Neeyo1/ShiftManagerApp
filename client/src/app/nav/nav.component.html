@@ -19,7 +19,7 @@
         </ul>
 
         @if (accountService.currentUser()) {
-            <div dropdown class="dropdown">
+            <div dropdown class="dropdown pe-3">
                 <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
                     @if (accountService.currentUser()?.firstName == ""
                         && accountService.currentUser()?.lastName == "") {
@@ -28,9 +28,22 @@
                     @else {
                         {{accountService.currentUser()?.firstName}} {{accountService.currentUser()?.lastName}}
                     }
+                    @if (notificationService.unreadMessages()) {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{notificationService.unreadMessages()}}
+                        </span>
+                    }
+                    
                 </a>
                 <div *dropdownMenu class="dropdown-menu">
                     <a class="dropdown-item" (click)="changePassword()">Change password</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" routerLink="/notifications">
+                        Notifications
+                        @if (notificationService.unreadMessages()) {
+                            ({{notificationService.unreadMessages()}})
+                        }
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" (click)="logout()">Logout</a>
                 </div>
