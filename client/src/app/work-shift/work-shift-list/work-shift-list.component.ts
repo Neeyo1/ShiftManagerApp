@@ -8,6 +8,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '../../_services/modal.service';
 import { DatePipe } from '@angular/common';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { WorkShiftFilterComponent } from '../../offcanvas/work-shift-filter/work-shift-filter.component';
 
 @Component({
   selector: 'app-work-shift-list',
@@ -21,6 +23,7 @@ export class WorkShiftListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private myModalService = inject(ModalService);
+  private offcanvasService = inject(NgbOffcanvas);
 
   ngOnInit(): void {
     this.loadWorkShifts();
@@ -46,11 +49,6 @@ export class WorkShiftListComponent implements OnInit, OnDestroy{
     this.toastrService.info("Delete modal")
   }
 
-  resetFilters(){
-    this.workShiftService.resetWorkShiftParams();
-    this.loadWorkShifts();
-  }
-
   pageChanged(event: any){
     if (this.workShiftService.workShiftParams().pageNumber != event.page){
       this.workShiftService.workShiftParams().pageNumber = event.page;
@@ -60,6 +58,6 @@ export class WorkShiftListComponent implements OnInit, OnDestroy{
   }
 
   showOffcanvas() {
-		this.toastrService.info("filtering offcanvas");
+		this.offcanvasService.open(WorkShiftFilterComponent);
 	}
 }

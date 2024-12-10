@@ -34,27 +34,18 @@ public class WorkShiftRepository(DataContext context, IMapper mapper) : IWorkShi
             query = query.Where(x => x.EmployeeId == workShiftParams.EmployeeId);
         }
 
-        if (workShiftParams.Date != null)
-        {
-            var date = DateOnly.Parse(workShiftParams.Date);
-            
-            query = query.Where(x => x.Date == date);
-        }
-
         if (workShiftParams.DateFrom != null)
         {
-            var dateFrom = DateTime.SpecifyKind(DateTime.Parse(workShiftParams.DateFrom), 
-                DateTimeKind.Utc);
+            var dateFrom = DateOnly.Parse(workShiftParams.DateFrom);
             
-            query = query.Where(x => x.Start >= dateFrom);
+            query = query.Where(x => x.Date >= dateFrom);
         }
 
         if (workShiftParams.DateTo != null)
         {
-            var dateTo = DateTime.SpecifyKind(DateTime.Parse(workShiftParams.DateTo), 
-                DateTimeKind.Utc);
+            var dateTo = DateOnly.Parse(workShiftParams.DateTo);
             
-            query = query.Where(x => x.Start <= dateTo);
+            query = query.Where(x => x.Date <= dateTo);
         }
 
         query = workShiftParams.Status switch

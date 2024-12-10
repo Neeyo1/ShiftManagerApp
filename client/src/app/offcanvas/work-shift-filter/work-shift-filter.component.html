@@ -4,47 +4,51 @@
 </div>
 <div class="offcanvas-body">
     <div class="d-flex">
-        <form #form="ngForm" class="mx-auto" style="width: 80%;" (ngSubmit)="loadEmployees()" autocomplete="off">
+        <form #form="ngForm" class="mx-auto" style="width: 80%;" (ngSubmit)="loadWorkShifts()" autocomplete="off">
             <div class="mb-3 form-floating">
                 <input type="number" 
                        class="form-control" 
                        name="employeeId" 
                        placeholder="Employee ID"
-                       [(ngModel)]="employeeService.employeeParams().employeeId">
+                       [(ngModel)]="worhShiftService.workShiftParams().employeeId">
                 <label>Employee ID</label>
             </div>
 
             <div class="mb-3 form-floating">
                 <input type="number" 
                        class="form-control" 
-                       name="departmentId" 
-                       placeholder="Department ID"
-                       [(ngModel)]="employeeService.employeeParams().departmentId">
-                <label>Department ID</label>
+                       name="workShiftId" 
+                       placeholder="Work shift ID"
+                       [(ngModel)]="worhShiftService.workShiftParams().workShiftId">
+                <label>Work shift ID</label>
             </div>
 
             <div class="mb-3 form-floating">
-                <input type="text" 
-                       class="form-control" 
-                       name="firstName" 
-                       placeholder="First name"
-                       [(ngModel)]="employeeService.employeeParams().firstName">
-                <label>First name</label>
+                <input 
+                    class="form-control" 
+                    name="dateFrom"
+                    placeholder="Date from"
+                    bsDatepicker
+                    [bsConfig]="bsConfig"
+                    [(ngModel)]="worhShiftService.workShiftParams().dateFrom">
+                <label>Date from</label>
             </div>
 
             <div class="mb-3 form-floating">
-                <input type="text" 
-                       class="form-control" 
-                       name="lastName" 
-                       placeholder="Last name"
-                       [(ngModel)]="employeeService.employeeParams().lastName">
-                <label>Last name</label>
+                <input 
+                    class="form-control" 
+                    name="dateTo"
+                    placeholder="Date to"
+                    bsDatepicker
+                    [bsConfig]="bsConfig"
+                    [(ngModel)]="worhShiftService.workShiftParams().dateTo">
+                <label>Date to</label>
             </div>
 
             <div class="mb-3 form-floating">
                 <select name="status" 
                         class="form-select" 
-                        [(ngModel)]="employeeService.employeeParams().status">
+                        [(ngModel)]="worhShiftService.workShiftParams().status">
                     @for (status of statusList; track status.value) {
                         <option [value]="status.value">{{status.display}}</option>
                     }
@@ -55,7 +59,7 @@
             <div class="mb-3 form-floating">
                 <select name="orderBy" 
                         class="form-select" 
-                        [(ngModel)]="employeeService.employeeParams().orderBy">
+                        [(ngModel)]="worhShiftService.workShiftParams().orderBy">
                     @for (orderBy of orderByList; track orderBy.value) {
                         <option [value]="orderBy.value">{{orderBy.display}}</option>
                     }

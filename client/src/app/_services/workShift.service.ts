@@ -29,7 +29,6 @@ export class WorkShiftService {
 
     params = params.append("workShiftId", this.workShiftParams().workShiftId);
     params = params.append("employeeId", this.workShiftParams().employeeId);
-    params = params.append("date", this.workShiftParams().date as string);
     params = params.append("dateFrom", this.workShiftParams().dateFrom as string);
     params = params.append("dateTo", this.workShiftParams().dateTo as string);
     params = params.append("orderBy", this.workShiftParams().orderBy as string);
