@@ -29,10 +29,14 @@ export class WorkShiftFilterComponent {
   };
 
   loadWorkShifts(){
-    let dateFrom = new Date(this.worhShiftService.workShiftParams().dateFrom);
-    this.worhShiftService.workShiftParams().dateFrom = dateFrom.toISOString().slice(0,10);
-    let dateTo = new Date(this.worhShiftService.workShiftParams().dateTo);
-    this.worhShiftService.workShiftParams().dateTo = dateTo.toISOString().slice(0,10);
+    if (this.worhShiftService.workShiftParams().dateFrom){
+      let dateFrom = new Date(this.worhShiftService.workShiftParams().dateFrom);
+      this.worhShiftService.workShiftParams().dateFrom = dateFrom.toISOString().slice(0,10);
+    }
+    if (this.worhShiftService.workShiftParams().dateTo){
+      let dateTo = new Date(this.worhShiftService.workShiftParams().dateTo);
+      this.worhShiftService.workShiftParams().dateTo = dateTo.toISOString().slice(0,10);
+    }
 
     this.worhShiftService.getWorkShifts();
   }

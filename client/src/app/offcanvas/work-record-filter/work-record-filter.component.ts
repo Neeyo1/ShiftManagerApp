@@ -31,10 +31,14 @@ export class WorkRecordFilterComponent {
   };
 
   loadWorkRecords(){
-    let dateFrom = new Date(this.workRecordService.workRecordParams().dateFrom);
-    this.workRecordService.workRecordParams().dateFrom = dateFrom.toISOString();
-    let dateTo = new Date(this.workRecordService.workRecordParams().dateTo);
-    this.workRecordService.workRecordParams().dateTo = dateTo.toISOString();
+    if (this.workRecordService.workRecordParams().dateFrom){
+      let dateFrom = new Date(this.workRecordService.workRecordParams().dateFrom);
+      this.workRecordService.workRecordParams().dateFrom = dateFrom.toISOString();
+    }
+    if (this.workRecordService.workRecordParams().dateTo){
+      let dateTo = new Date(this.workRecordService.workRecordParams().dateTo);
+      this.workRecordService.workRecordParams().dateTo = dateTo.toISOString();
+    }
 
     this.workRecordService.getWorkRecords();
   }
