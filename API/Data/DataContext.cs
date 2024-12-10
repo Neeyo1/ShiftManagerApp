@@ -13,6 +13,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
     public DbSet<Employee> Employees { get; set; }
     public DbSet<WorkRecord> WorkRecords { get; set; }
     public DbSet<WorkShift> WorkShifts { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
