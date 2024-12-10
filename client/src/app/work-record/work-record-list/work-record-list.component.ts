@@ -42,7 +42,15 @@ export class WorkRecordListComponent implements OnInit, OnDestroy{
   }
 
   deleteWorkRecord(workRecordId: number){
-    this.toastrService.info("Delete modal")
+    this.myModalService.openConfirmModal("work record")?.subscribe({
+      next: result => {
+        if (result){
+          this.workRecordService.deleteWorkRecord(workRecordId).subscribe({
+            next: _ => this.loadWorkRecords()
+          });
+        }
+      }
+    })
   }
 
   pageChanged(event: any){

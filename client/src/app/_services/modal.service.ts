@@ -15,6 +15,8 @@ import { WorkShift } from '../_models/workShift';
 import { WorkRecord } from '../_models/workRecord';
 import { WorkRecordModalComponent } from '../modals/work-record-modal/work-record-modal.component';
 import { WorkRecordService } from './workRecord.service';
+import { map } from 'rxjs';
+import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -210,5 +212,24 @@ export class ModalService {
         }
       }
     })
+  }
+
+  openConfirmModal(name: string){
+    const config: ModalOptions = {
+      initialState: {
+        result: false,
+        name: name
+      }
+    }
+    this.bsModalRef = this.modalService.show(ConfirmDialogComponent, config);
+    return this.bsModalRef.onHidden?.pipe(
+      map(() => {
+        if (this.bsModalRef?.content){
+          return this.bsModalRef.content.result;
+        } else{
+          return false;
+        }
+      })
+    )
   }
 }

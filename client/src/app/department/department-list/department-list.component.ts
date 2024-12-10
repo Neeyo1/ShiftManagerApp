@@ -45,7 +45,15 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
   }
 
   deleteDepartment(departmentId: number){
-    this.toastrService.info("Delete modal")
+    this.myModalService.openConfirmModal("department")?.subscribe({
+      next: result => {
+        if (result){
+          this.departmentService.deleteDepartment(departmentId).subscribe({
+            next: _ => this.loadDepartments()
+          });
+        }
+      }
+    })
   }
 
   pageChanged(event: any){

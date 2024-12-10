@@ -45,7 +45,15 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
   }
 
   deleteEmployee(employeeId: number){
-    this.toastrService.info("Delete modal")
+    this.myModalService.openConfirmModal("employee")?.subscribe({
+      next: result => {
+        if (result){
+          this.employeeService.deleteEmployee(employeeId).subscribe({
+            next: _ => this.loadEmployees()
+          });
+        }
+      }
+    })
   }
 
   activeEmployee(employeeId: number){

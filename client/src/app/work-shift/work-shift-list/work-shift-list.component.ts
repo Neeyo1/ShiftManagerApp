@@ -46,7 +46,15 @@ export class WorkShiftListComponent implements OnInit, OnDestroy{
   }
 
   deleteWorkShift(workShiftId: number){
-    this.toastrService.info("Delete modal")
+    this.myModalService.openConfirmModal("work shift")?.subscribe({
+      next: result => {
+        if (result){
+          this.workShiftService.deleteWorkShift(workShiftId).subscribe({
+            next: _ => this.loadWorkShifts()
+          });
+        }
+      }
+    })
   }
 
   pageChanged(event: any){

@@ -1,0 +1,13 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary">Delete {{name}}</h4>
+        <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+        Are you sure you want to delete this {{name}}?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirm()">Delete</button>
+    </div>  
+</div>
