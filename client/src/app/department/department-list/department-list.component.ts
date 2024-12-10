@@ -48,11 +48,6 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
     this.toastrService.info("Delete modal")
   }
 
-  resetFilters(){
-    this.departmentService.resetDepartmentParams();
-    this.loadDepartments();
-  }
-
   pageChanged(event: any){
     if (this.departmentService.departmentParams().pageNumber != event.page){
       this.departmentService.departmentParams().pageNumber = event.page;

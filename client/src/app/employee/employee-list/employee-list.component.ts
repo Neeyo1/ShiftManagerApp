@@ -7,6 +7,8 @@ import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '../../_services/modal.service';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { EmployeeFilterComponent } from '../../offcanvas/employee-filter/employee-filter.component';
 
 @Component({
   selector: 'app-employee-list',
@@ -20,6 +22,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private myModalService = inject(ModalService);
+  private offcanvasService = inject(NgbOffcanvas);
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -57,11 +60,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
     })
   }
 
-  resetFilters(){
-    this.employeeService.resetEmployeeParams();
-    this.loadEmployees();
-  }
-
   pageChanged(event: any){
     if (this.employeeService.employeeParams().pageNumber != event.page){
       this.employeeService.employeeParams().pageNumber = event.page;
@@ -71,6 +69,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
   }
 
   showOffcanvas() {
-		this.toastrService.info("filtering offcanvas");
+		this.offcanvasService.open(EmployeeFilterComponent);
 	}
 }
