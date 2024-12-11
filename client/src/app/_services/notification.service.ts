@@ -14,6 +14,7 @@ export class NotificationService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
   notificationCache = new Map();
+  notificationDetailedCache = new Map();
   paginatedResult = signal<PaginatedResult<Notification[]> | null>(null);
   notificationParams = signal<NotificationParams>(new NotificationParams);
   unreadMessages = signal<number>(0);
@@ -52,13 +53,17 @@ export class NotificationService {
 
   getNotification(id: number){
     const notification: NotificationDetailed = 
-        this.notificationCache.get(`notification-detailed-${id}`);
+        this.notificationDetailedCache.get(`notification-detailed-${id}`);
 
     if (notification) return of(notification);
     
     return this.http.get<NotificationDetailed>(this.baseUrl + `notifications/${id}`).pipe(
         tap(notif => {
-            this.notificationCache.set(`notification-detailed-${id}`, notif);
+            if (notif.isChanged){
+              this.notificationCache.clear();
+              this.unreadMessages.update(x => x - 1);
+            }
+            this.notificationDetailedCache.set(`notification-detailed-${id}`, notif);
         })
     )
   }

@@ -1,0 +1,50 @@
+<button class="btn btn-primary" (click)="showOffcanvas()">Filter</button>
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Title</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Read at</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (notification of notificationService.paginatedResult()?.items; track notification.id) {
+              <tr>
+                  <td>{{notification.id}}</td>
+                  <td>{{notification.title}}</td>
+                  <td>{{notification.createdAt | date:'d/MM/yyyy H:mm'}}</td>
+                  <td>
+                    @if (notification.isRead) {
+                        {{notification.readAt | date:'d/MM/yyyy H:mm'}}
+                    } @else {
+                        -----
+                    }
+                  </td>
+                  <td>
+                    <button class="btn btn-primary" 
+                            routerLink="/notifications/{{notification.id}}">
+                      Details
+                    </button>
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (notificationService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="notificationService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="notificationService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="notificationService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }

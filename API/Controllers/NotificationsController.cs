@@ -44,7 +44,11 @@ public class NotificationsController(INotificationRepository notificationReposit
             notification.ReadAt = DateTime.UtcNow;
 
             if (await notificationRepository.Complete())
-                return Ok(mapper.Map<NotificationDetailedDto>(notification));
+            {
+                var result = mapper.Map<NotificationDetailedDto>(notification);
+                result.IsChanged = true;
+                return Ok(result);
+            }
             return BadRequest("Failed to read notification");
         }
         else

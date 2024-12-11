@@ -10,7 +10,7 @@ export interface NotificationDetailed{
     id: number;
     title: string;
     content: string;
-    isRead: boolean;
     createdAt: Date;
-    readAt?: Date;
+    readAt: Date;
+    isChanged: boolean;
 }

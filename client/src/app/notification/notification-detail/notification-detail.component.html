@@ -1,0 +1,8 @@
+<div>
+    <p>Notification id: {{notification()?.id}}</p>
+    <p>Notification title: {{notification()?.title}}</p>
+    <p>Notification content: {{notification()?.content}}</p>
+    <p>Notification createdAt: {{notification()?.createdAt | date:'d/MM/yyyy H:mm'}}</p>
+    <p>Notification readAt: {{notification()?.readAt | date:'d/MM/yyyy H:mm'}}</p>
+    <p>Notification changes: {{notification()?.isChanged}}</p>
+</div>

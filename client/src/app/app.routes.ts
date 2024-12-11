@@ -11,6 +11,8 @@ import { WorkRecordListComponent } from './work-record/work-record-list/work-rec
 import { WorkRecordDetailComponent } from './work-record/work-record-detail/work-record-detail.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
+import { NotificationListComponent } from './notification/notification-list/notification-list.component';
+import { NotificationDetailComponent } from './notification/notification-detail/notification-detail.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -27,6 +29,8 @@ export const routes: Routes = [
             {path: 'workshifts/:id', component: WorkShiftDetailComponent},
             {path: 'workrecords', component: WorkRecordListComponent},
             {path: 'workrecords/:id', component: WorkRecordDetailComponent},
+            {path: 'notifications', component: NotificationListComponent},
+            {path: 'notifications/:id', component: NotificationDetailComponent},
         ]
     },
     {path: 'not-found', component: NotFoundComponent},
