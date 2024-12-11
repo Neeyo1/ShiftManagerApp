@@ -12,6 +12,10 @@
                     </p>
                 }
             </p>
+            <button class="btn btn-primary"
+                    (click)="sendNotification()">
+                Send notification
+            </button>
         </tab>
         <tab heading="Employees" (selectTab)="loadEmployees()">
             <table class="table table-hover">

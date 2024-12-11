@@ -6,6 +6,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { RouterLink } from '@angular/router';
 import { NotificationFilterComponent } from '../../offcanvas/notification-filter/notification-filter.component';
 import { DatePipe } from '@angular/common';
+import { AccountService } from '../../_services/account.service';
 
 @Component({
   selector: 'app-notification-list',
@@ -16,6 +17,7 @@ import { DatePipe } from '@angular/common';
 })
 export class NotificationListComponent implements OnInit, OnDestroy{
   notificationService = inject(NotificationService);
+  accountService = inject(AccountService);
   private offcanvasService = inject(NgbOffcanvas);
 
   ngOnInit(): void {

@@ -6,6 +6,9 @@ import { Notification, NotificationDetailed } from '../_models/notification';
 import { NotificationParams } from '../_models/notificationParams';
 import { of, tap } from 'rxjs';
 import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { User } from '../_models/user';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +16,37 @@ import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
 export class NotificationService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
+  hubUrl = environment.hubsUrl;
   notificationCache = new Map();
   notificationDetailedCache = new Map();
   paginatedResult = signal<PaginatedResult<Notification[]> | null>(null);
   notificationParams = signal<NotificationParams>(new NotificationParams);
   unreadMessages = signal<number>(0);
+  hubConnection?: HubConnection;
+  private toastrService = inject(ToastrService);
+
+  createHubConnection(user: User) {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(this.hubUrl + 'notification', {
+        accessTokenFactory: () => user.token
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    this.hubConnection.start().catch(error => console.log(error));
+
+    this.hubConnection.on('NewNotification', _ => {
+      this.toastrService.info("New notification");
+      this.unreadMessages.update(x => x + 1);
+      this.notificationCache.clear();
+    });
+  }
+
+  stopHubConnection() {
+    if (this.hubConnection?.state === HubConnectionState.Connected) {
+      this.hubConnection.stop().catch(error => console.log(error))
+    }
+  }
 
   resetNotificationParams(){
     this.notificationParams.set(new NotificationParams);
@@ -68,11 +97,15 @@ export class NotificationService {
     )
   }
 
-  createNotification(){
-    return this.http.post(this.baseUrl + "notifications", {}).pipe(
-      tap(() => {
-        this.notificationCache.clear();
-      })
-    );
+  // createNotification(){
+  //   return this.http.post(this.baseUrl + "notifications", {}).pipe(
+  //     tap(() => {
+  //       this.notificationCache.clear();
+  //     })
+  //   );
+  // }
+
+  async createNotification(departmentId: number) {
+    return this.hubConnection?.invoke('SendNotification', departmentId)
   }
 }
