@@ -1,0 +1,79 @@
+<div class="offcanvas-header">
+    <h4 class="offcanvas-title" id="offcanvas-basic-title">Filter results</h4>
+    <button type="button" class="btn-close" (click)="activeOffcanvas.dismiss()"></button>
+</div>
+<div class="offcanvas-body">
+    <div class="d-flex">
+        <form #form="ngForm" class="mx-auto" style="width: 80%;" (ngSubmit)="loadMembers()" autocomplete="off">
+            <div class="mb-3 form-floating">
+                <input type="number" 
+                       class="form-control" 
+                       name="memberId" 
+                       placeholder="Member ID"
+                       [(ngModel)]="memberService.memberParams().memberId">
+                <label>Member ID</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <input type="number" 
+                       class="form-control" 
+                       name="departmentId" 
+                       placeholder="Department ID"
+                       [(ngModel)]="memberService.memberParams().departmentId">
+                <label>Department ID</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <input type="text" 
+                       class="form-control" 
+                       name="firstName" 
+                       placeholder="First name"
+                       [(ngModel)]="memberService.memberParams().firstName">
+                <label>First name</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <input type="text" 
+                       class="form-control" 
+                       name="lastName" 
+                       placeholder="Last name"
+                       [(ngModel)]="memberService.memberParams().lastName">
+                <label>Last name</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <select name="status" 
+                        class="form-select" 
+                        [(ngModel)]="memberService.memberParams().status">
+                    @for (status of statusList; track status.value) {
+                        <option [value]="status.value">{{status.display}}</option>
+                    }
+                </select>
+                <label>Status</label>
+            </div>
+
+            <div class="mb-3 form-floating">
+                <select name="orderBy" 
+                        class="form-select" 
+                        [(ngModel)]="memberService.memberParams().orderBy">
+                    @for (orderBy of orderByList; track orderBy.value) {
+                        <option [value]="orderBy.value">{{orderBy.display}}</option>
+                    }
+                </select>
+                <label>Order by</label>
+            </div>
+
+            <div class="form-group text-center">
+                <button class="btn btn-primary" type="submit">
+                    Filter
+                </button>
+                <button (click)="resetFilters()" class="btn btn-primary" type="button">
+                    Reset
+                </button>
+                <button (click)="closeOffcanvas(activeOffcanvas)" class="btn btn-primary" type="button">
+                    Close
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

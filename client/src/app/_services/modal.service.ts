@@ -17,6 +17,8 @@ import { WorkRecordModalComponent } from '../modals/work-record-modal/work-recor
 import { WorkRecordService } from './workRecord.service';
 import { map } from 'rxjs';
 import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.component';
+import { MemberModalComponent } from '../modals/member-modal/member-modal.component';
+import { MemberService } from './member.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +32,7 @@ export class ModalService {
   private employeeService = inject(EmployeeService);
   private workShiftService = inject(WorkShiftService);
   private workRecordService = inject(WorkRecordService);
+  private memberService = inject(MemberService);
 
   openChangePasswordModal(){
     const config: ModalOptions = {
@@ -231,5 +234,25 @@ export class ModalService {
         }
       })
     )
+  }
+
+  openCreateMemberModal(){
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false
+      }
+    };
+    this.bsModalRef = this.modalService.show(MemberModalComponent, config);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let memberForm = this.bsModalRef.content.memberForm;
+          this.memberService.createMember(memberForm.value).subscribe({
+            next: _ => this.memberService.getMembers()
+          })
+        }
+      }
+    })
   }
 }

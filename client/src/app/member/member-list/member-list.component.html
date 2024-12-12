@@ -1,0 +1,64 @@
+<button class="btn btn-primary" (click)="showOffcanvas()">Filter</button>
+@if (accountService.roles().includes("Admin")) {
+  <button (click)="createMember()" class="btn btn-primary" type="button">Create member</button>
+}
+  
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Department id</th>
+          <th scope="col">First name</th>
+          <th scope="col">Last name</th>
+          <th scope="col">Role</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Last active</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (member of memberService.paginatedResult()?.items; track member.id) {
+              <tr>
+                  <td>{{member.id}}</td>
+                  <td>{{member.departmentId}}</td>
+                  <td>{{member.firstName}}</td>
+                  <td>{{member.lastName}}</td>
+                  <td>{{member.role}}</td>
+                  <td>{{member.createdAt | date:'d/MM/yyyy H:mm'}}</td>
+                  <td>{{member.lastActive | date:'d/MM/yyyy H:mm'}}</td>
+                  <td>
+                    <button class="btn btn-primary" 
+                            routerLink="/members/{{member.id}}">
+                      Details
+                    </button>
+                    @if (accountService.roles().includes("Admin")) {
+                      <button class="btn btn-info" 
+                              (click)="changePassword(member.id)">
+                        Edit
+                      </button>
+                      <button class="btn btn-danger" 
+                              (click)="deleteMember(member.id)">
+                        Delete
+                      </button>
+                    }
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (memberService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="memberService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="memberService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="memberService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }

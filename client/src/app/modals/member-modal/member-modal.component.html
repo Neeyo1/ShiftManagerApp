@@ -1,0 +1,48 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary">
+            Create member
+        </h4>
+        <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="col-8">
+                <form [formGroup]="memberForm" id="memberForm" (ngSubmit)="complete()" autocomplete="off">
+                    <app-text-input [formControl]="$any(memberForm.controls['username'])"
+                        [label]="'Username'"></app-text-input>
+
+                    <app-text-input [formControl]="$any(memberForm.controls['firstName'])"
+                        [label]="'First name'"></app-text-input>
+
+                    <app-text-input [formControl]="$any(memberForm.controls['lastName'])"
+                        [label]="'Last name'"></app-text-input>
+
+                    <app-text-input [formControl]="$any(memberForm.controls['password'])"
+                        [label]="'Password'" [type]="'password'"></app-text-input>
+
+                    <app-text-input [formControl]="$any(memberForm.controls['confirmPassword'])"
+                        [label]="'Confirm password'" [type]="'password'"></app-text-input>
+
+                    @if (validationErrors) {
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            @for (error of validationErrors; track $index) {
+                            <li>{{error}}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Close</button>
+        <button class="btn btn-primary" 
+                form="memberForm"
+                [disabled]="!memberForm.valid">
+            Save changes
+        </button>
+    </div>
+</div>

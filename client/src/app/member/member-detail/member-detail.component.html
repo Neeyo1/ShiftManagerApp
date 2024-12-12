@@ -1,0 +1,27 @@
+<div>
+    <tabset>
+        <tab heading="Member details">
+            <p>Member id: {{member()?.id}}</p>
+            <p>Member name: {{member()?.firstName}} {{member()?.lastName}}</p>
+            <p>Member role: {{member()?.role}}</p>
+            <p>Member created at: {{member()?.createdAt | date:'d/MM/yyyy H:mm'}}</p>
+            <p>Member last active at: {{member()?.lastActive | date:'d/MM/yyyy H:mm'}}</p>
+
+        </tab>
+        @if (member()!.departmentId) {
+            <tab heading="Department detail" (selectTab)="loadDepartment(member()!.departmentId!)">
+                <p>Department id: {{department()?.id}}</p>
+                <p>Department name: {{department()?.name}}</p>
+                <p>Department member count: {{department()?.employeeCount}}</p>
+                <p>
+                    Department managers:
+                    @for (manager of department()?.managers; track manager.id) {
+                <p>
+                    {{manager.firstName}} {{manager.lastName}}
+                </p>
+                }
+                </p>
+            </tab>
+        }
+    </tabset>
+</div>

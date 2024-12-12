@@ -13,6 +13,8 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { NotificationListComponent } from './notification/notification-list/notification-list.component';
 import { NotificationDetailComponent } from './notification/notification-detail/notification-detail.component';
+import { MemberListComponent } from './member/member-list/member-list.component';
+import { MemberDetailComponent } from './member/member-detail/member-detail.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -31,6 +33,8 @@ export const routes: Routes = [
             {path: 'workrecords/:id', component: WorkRecordDetailComponent},
             {path: 'notifications', component: NotificationListComponent},
             {path: 'notifications/:id', component: NotificationDetailComponent},
+            {path: 'members', component: MemberListComponent},
+            {path: 'members/:id', component: MemberDetailComponent},
         ]
     },
     {path: 'not-found', component: NotFoundComponent},
