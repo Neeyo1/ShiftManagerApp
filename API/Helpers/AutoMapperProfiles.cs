@@ -25,6 +25,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<Summary, SummaryDto>();
         CreateMap<Notification, NotificationDto>();
         CreateMap<Notification, NotificationDetailedDto>();
+        CreateMap<AppUser, MemberDto>()
+            .ForMember(x => x.Role, y => y.MapFrom(z => z.UserRoles.Select(a => a.Role).FirstOrDefault()));
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<string, TimeOnly>().ConvertUsing(s => TimeOnly.Parse(s));
