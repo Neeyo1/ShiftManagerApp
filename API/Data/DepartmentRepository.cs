@@ -31,7 +31,7 @@ public class DepartmentRepository(DataContext context, IMapper mapper) : IDepart
 
         if (departmentParams.Name != null)
         {
-            query = query.Where(x => x.Name == departmentParams.Name);
+            query = query.Where(x => x.Name.Contains(departmentParams.Name));
         }
 
         query = departmentParams.OrderBy switch

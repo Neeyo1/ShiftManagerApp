@@ -36,12 +36,12 @@ public class EmployeeRepository(DataContext context, IMapper mapper) : IEmployee
 
         if (employeeParams.FirstName != null)
         {
-            query = query.Where(x => x.FirstName == employeeParams.FirstName);
+            query = query.Where(x => x.FirstName.Contains(employeeParams.FirstName));
         }
 
         if (employeeParams.LastName != null)
         {
-            query = query.Where(x => x.LastName == employeeParams.LastName);
+            query = query.Where(x => x.LastName.Contains(employeeParams.LastName));
         }
 
         query = employeeParams.Status switch

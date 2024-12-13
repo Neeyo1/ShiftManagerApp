@@ -52,12 +52,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
         if (memberParams.FirstName != null)
         {
-            query = query.Where(x => x.FirstName == memberParams.FirstName);
+            query = query.Where(x => x.FirstName.Contains(memberParams.FirstName));
         }
 
         if (memberParams.LastName != null)
         {
-            query = query.Where(x => x.LastName == memberParams.LastName);
+            query = query.Where(x => x.LastName.Contains(memberParams.LastName));
         }
 
         query = memberParams.Status switch
