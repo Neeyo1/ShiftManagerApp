@@ -36,6 +36,14 @@
                               (click)="editDepartment(department)">
                         Edit
                       </button>
+                      <button class="btn btn-secondary" 
+                              (click)="addManager(department.id)">
+                        <i class="fa-solid fa-user-plus"></i>
+                      </button>
+                      <button class="btn btn-secondary" 
+                              (click)="removeManager(department.id, department.managers)">
+                        <i class="fa-solid fa-user-minus"></i>
+                      </button>
                       <button class="btn btn-danger" 
                               (click)="deleteDepartment(department.id)">
                         Delete

@@ -33,6 +33,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.Users
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
+            .Include(x => x.Department)
             .SingleOrDefaultAsync(x => x.Id == userId);
     }
 

@@ -1,0 +1,54 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary">
+            @if (managers) {
+            Remove manager
+            } @else {
+            Add manager
+            }
+        </h4>
+        <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="col-8">
+                <form [formGroup]="changeManagerForm" id="changeManagerForm" (ngSubmit)="complete()" autocomplete="off">
+                    @if (managers) {
+                        <div class="mb-3 form-floating">
+                            <select name="memberId" 
+                                    class="form-select" 
+                                    [formControl]="$any(changeManagerForm.controls['memberId'])">
+                                @for (manager of managers; track manager.id) {
+                                    <option [value]="manager.id">{{manager.firstName}} {{manager.lastName}}</option>
+                                }
+                            </select>
+                            <label>Member</label>
+                        </div>
+                    } @else {
+                        <app-text-input [formControl]="$any(changeManagerForm.controls['memberId'])"
+                            [label]="'Member ID'"></app-text-input>
+                    }
+                    
+
+                    @if (validationErrors) {
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            @for (error of validationErrors; track $index) {
+                            <li>{{error}}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Close</button>
+        <button class="btn btn-primary" 
+                form="changeManagerForm"
+                [disabled]="!changeManagerForm.valid">
+            Save changes
+        </button>
+    </div>
+</div>

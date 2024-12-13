@@ -9,6 +9,7 @@ import { Department } from '../../_models/department';
 import { ModalService } from '../../_services/modal.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { DepartmentFilterComponent } from '../../offcanvas/department-filter/department-filter.component';
+import { Manager } from '../../_models/manager';
 
 @Component({
   selector: 'app-department-list',
@@ -67,4 +68,12 @@ export class DepartmentListComponent implements OnInit, OnDestroy{
   showOffcanvas() {
 		this.offcanvasService.open(DepartmentFilterComponent);
 	}
+
+  addManager(departmentId: number){
+    this.myModalService.openAddManagerModal(departmentId);
+  }
+
+  removeManager(departmentId: number, managers: Manager[]){
+    this.myModalService.openRemoveManagerModal(departmentId, managers);
+  }
 }

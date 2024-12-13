@@ -77,7 +77,7 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
         var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
         if (department == null) return NotFound();
 
-        var manager = await userRepository.GetUserByIdAsync(managerId);
+        var manager = await userRepository.GetUserDetailedByIdAsync(managerId);
         if (manager == null) return NotFound();
         if (manager.DepartmentId != null)
             return BadRequest($"This person is already manager of '{manager.Department!.Name}' department");

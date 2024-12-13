@@ -19,6 +19,8 @@ import { map } from 'rxjs';
 import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.component';
 import { MemberModalComponent } from '../modals/member-modal/member-modal.component';
 import { MemberService } from './member.service';
+import { ChangeManagerModalComponent } from '../modals/change-manager-modal/change-manager-modal.component';
+import { Manager } from '../_models/manager';
 
 @Injectable({
   providedIn: 'root'
@@ -250,6 +252,51 @@ export class ModalService {
           let memberForm = this.bsModalRef.content.memberForm;
           this.memberService.createMember(memberForm.value).subscribe({
             next: _ => this.memberService.getMembers()
+          })
+        }
+      }
+    })
+  }
+
+  openAddManagerModal(departmentId: number){
+    if (departmentId == null) return;
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false,
+        departmentId: departmentId
+      }
+    };
+    this.bsModalRef = this.modalService.show(ChangeManagerModalComponent, config);
+    return this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let memberId = this.bsModalRef.content.changeManagerForm.value['memberId'];
+          this.departmentService.addManager(departmentId, memberId).subscribe({
+            next: _ => this.departmentService.getDepartments()
+          })
+        }
+      }
+    })
+  }
+
+  openRemoveManagerModal(departmentId: number, managers: Manager[]){
+    if (departmentId == null) return;
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false,
+        departmentId: departmentId,
+        managers: managers
+      }
+    };
+    this.bsModalRef = this.modalService.show(ChangeManagerModalComponent, config);
+    return this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let memberId = this.bsModalRef.content.changeManagerForm.value['memberId'];
+          this.departmentService.removeManager(departmentId, memberId).subscribe({
+            next: _ => this.departmentService.getDepartments()
           })
         }
       }
