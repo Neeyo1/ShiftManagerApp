@@ -56,8 +56,8 @@ export class WorkRecordService {
     return this.http.get<WorkRecord>(this.baseUrl + `workRecords/${id}`);
   }
 
-  createWorkRecord(model: any){
-    return this.http.post<WorkRecord>(this.baseUrl + "workRecords", model).pipe(
+  createWorkRecord(employeeId: number){
+    return this.http.post<WorkRecord>(this.baseUrl + "workRecords?employeeId=" + employeeId, {}).pipe(
       tap(() => {
         this.workRecordCache.clear();
       })

@@ -51,7 +51,8 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
                 EmployeeId = employeeId
             };
             workRecordRepository.AddWorkRecord(newWorkRecord);
-            if (await workRecordRepository.Complete()) return Ok($"Hello {employee.FirstName}");
+            if (await workRecordRepository.Complete()) 
+                return Ok(mapper.Map<WorkRecordDto>(newWorkRecord));
         }
         else //workRecord.End == null
         {
@@ -67,13 +68,14 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
                 };
                 workRecordRepository.AddWorkRecord(newWorkRecord);
                 if (await workRecordRepository.Complete())
-                    return Ok($"Hello {employee.FirstName}, you forgot to register your leave last time, please contact your manager");
+                    return Ok(mapper.Map<WorkRecordDto>(newWorkRecord));
             }
             else //employee left normally
             {
                 workRecord.End = timeNow;
                 workRecord.MinutesInWork = Math.Ceiling((workRecord.End.Value - workRecord.Start).TotalMinutes);
-                if (await workRecordRepository.Complete()) return Ok($"Bye {employee.FirstName}");
+                if (await workRecordRepository.Complete())
+                    return Ok(mapper.Map<WorkRecordDto>(workRecord));
             }
         }
 

@@ -15,6 +15,7 @@ import { NotificationListComponent } from './notification/notification-list/noti
 import { NotificationDetailComponent } from './notification/notification-detail/notification-detail.component';
 import { MemberListComponent } from './member/member-list/member-list.component';
 import { MemberDetailComponent } from './member/member-detail/member-detail.component';
+import { SimulationComponent } from './simulation/simulation.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -39,5 +40,6 @@ export const routes: Routes = [
     },
     {path: 'not-found', component: NotFoundComponent},
     {path: 'server-error', component: ServerErrorComponent},
+    {path: 'simulation', component: SimulationComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'},
 ];
