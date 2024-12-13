@@ -24,12 +24,12 @@ public class WorkShiftRepository(DataContext context, IMapper mapper) : IWorkShi
     {
         var query = context.WorkShifts.AsQueryable();
 
-        if (workShiftParams.WorkShiftId != 0)
+        if (workShiftParams.WorkShiftId != null)
         {
             query = query.Where(x => x.Id == workShiftParams.WorkShiftId);
         }
 
-        if (workShiftParams.EmployeeId != 0)
+        if (workShiftParams.EmployeeId != null)
         {
             query = query.Where(x => x.EmployeeId == workShiftParams.EmployeeId);
         }

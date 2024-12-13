@@ -1,6 +1,6 @@
 export class MemberParams{
-    memberId = 0;
-    departmentId = 0;
+    memberId?: number;
+    departmentId?: number;
     firstName = "";
     lastName = "";
     status = "all";

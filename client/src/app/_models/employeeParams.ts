@@ -1,6 +1,6 @@
 export class EmployeeParams{
-    employeeId = 0;
-    departmentId = 0;
+    employeeId?: number;
+    departmentId?: number;
     firstName = "";
     lastName = "";
     status = "active";

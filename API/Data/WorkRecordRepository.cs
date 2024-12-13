@@ -24,12 +24,12 @@ public class WorkRecordRepository(DataContext context, IMapper mapper) : IWorkRe
     {
         var query = context.WorkRecords.AsQueryable();
 
-        if (workRecordParams.WorkRecordId != 0)
+        if (workRecordParams.WorkRecordId != null)
         {
             query = query.Where(x => x.Id == workRecordParams.WorkRecordId);
         }
 
-        if (workRecordParams.EmployeeId != 0)
+        if (workRecordParams.EmployeeId != null)
         {
             query = query.Where(x => x.EmployeeId == workRecordParams.EmployeeId);
         }

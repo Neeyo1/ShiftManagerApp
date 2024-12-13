@@ -1,6 +1,6 @@
 export class WorkRecordParams{
-    workRecordId = 0;
-    employeeId = 0;
+    workRecordId?: number;
+    employeeId?: number;
     dateFrom = "";
     dateTo = "";
     status = "all";

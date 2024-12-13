@@ -40,12 +40,12 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     {
         var query = context.Users.AsQueryable();
 
-        if (memberParams.MemberId != 0)
+        if (memberParams.MemberId != null)
         {
             query = query.Where(x => x.Id == memberParams.MemberId);
         }
 
-        if (memberParams.DepartmentId != 0)
+        if (memberParams.DepartmentId != null)
         {
             query = query.Where(x => x.DepartmentId == memberParams.DepartmentId);
         }

@@ -27,8 +27,12 @@ export class WorkRecordService {
     if (response) return setPaginatedResponse(response, this.paginatedResult);
     let params = setPaginationHeaders(this.workRecordParams().pageNumber, this.workRecordParams().pageSize)
 
-    params = params.append("workRecordId", this.workRecordParams().workRecordId);
-    params = params.append("employeeId", this.workRecordParams().employeeId);
+    if (this.workRecordParams().workRecordId != null){
+      params = params.append("workRecordId", this.workRecordParams().workRecordId!);
+    }
+    if (this.workRecordParams().employeeId != null){
+      params = params.append("employeeId", this.workRecordParams().employeeId!);
+    }
     params = params.append("dateFrom", this.workRecordParams().dateFrom as string);
     params = params.append("dateTo", this.workRecordParams().dateTo as string);
     params = params.append("status", this.workRecordParams().status as string);

@@ -27,8 +27,12 @@ export class MemberService {
     if (response) return setPaginatedResponse(response, this.paginatedResult);
     let params = setPaginationHeaders(this.memberParams().pageNumber, this.memberParams().pageSize)
 
-    params = params.append("memberId", this.memberParams().memberId);
-    params = params.append("departmentId", this.memberParams().departmentId);
+    if (this.memberParams().memberId != null){
+      params = params.append("memberId", this.memberParams().memberId!);
+    }
+    if (this.memberParams().departmentId != null){
+      params = params.append("departmentId", this.memberParams().departmentId!);
+    }
     params = params.append("firstName", this.memberParams().firstName as string);
     params = params.append("lastName", this.memberParams().lastName as string);
     params = params.append("status", this.memberParams().status as string);

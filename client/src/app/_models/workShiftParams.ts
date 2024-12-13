@@ -1,6 +1,6 @@
 export class WorkShiftParams{
-    workShiftId = 0;
-    employeeId = 0;
+    workShiftId?: number;
+    employeeId?: number;
     dateFrom = "";
     dateTo = "";
     status = "going";

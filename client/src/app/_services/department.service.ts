@@ -27,7 +27,9 @@ export class DepartmentService {
     if (response) return setPaginatedResponse(response, this.paginatedResult);
     let params = setPaginationHeaders(this.departmentParams().pageNumber, this.departmentParams().pageSize)
 
-    params = params.append("departmentId", this.departmentParams().departmentId);
+    if (this.departmentParams().departmentId != null){
+      params = params.append("departmentId", this.departmentParams().departmentId!);
+    }
     params = params.append("name", this.departmentParams().name as string);
     params = params.append("orderBy", this.departmentParams().orderBy as string);
 

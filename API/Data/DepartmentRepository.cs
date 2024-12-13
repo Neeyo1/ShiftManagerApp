@@ -24,7 +24,7 @@ public class DepartmentRepository(DataContext context, IMapper mapper) : IDepart
     {
         var query = context.Departments.AsQueryable();
 
-        if (departmentParams.DepartmentId != 0)
+        if (departmentParams.DepartmentId != null)
         {
             query = query.Where(x => x.Id == departmentParams.DepartmentId);
         }

@@ -1,5 +1,5 @@
 export class DepartmentParams{
-    departmentId = 0;
+    departmentId?: number;
     name = "";
     orderBy = "name";
     pageNumber = 1;

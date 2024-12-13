@@ -24,12 +24,12 @@ public class EmployeeRepository(DataContext context, IMapper mapper) : IEmployee
     {
         var query = context.Employees.AsQueryable();
 
-        if (employeeParams.EmployeeId != 0)
+        if (employeeParams.EmployeeId != null)
         {
             query = query.Where(x => x.Id == employeeParams.EmployeeId);
         }
 
-        if (employeeParams.DepartmentId != 0)
+        if (employeeParams.DepartmentId != null)
         {
             query = query.Where(x => x.DepartmentId == employeeParams.DepartmentId);
         }

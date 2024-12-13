@@ -27,8 +27,12 @@ export class EmployeeService {
     if (response) return setPaginatedResponse(response, this.paginatedResult);
     let params = setPaginationHeaders(this.employeeParams().pageNumber, this.employeeParams().pageSize)
 
-    params = params.append("employeeId", this.employeeParams().employeeId);
-    params = params.append("departmentId", this.employeeParams().departmentId);
+    if (this.employeeParams().employeeId != null){
+      params = params.append("employeeId", this.employeeParams().employeeId!);
+    }
+    if (this.employeeParams().departmentId != null){
+      params = params.append("departmentId", this.employeeParams().departmentId!);
+    }
     params = params.append("firstName", this.employeeParams().firstName as string);
     params = params.append("lastName", this.employeeParams().lastName as string);
     params = params.append("status", this.employeeParams().status as string);

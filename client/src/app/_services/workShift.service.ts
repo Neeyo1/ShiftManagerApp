@@ -27,8 +27,12 @@ export class WorkShiftService {
     if (response) return setPaginatedResponse(response, this.paginatedResult);
     let params = setPaginationHeaders(this.workShiftParams().pageNumber, this.workShiftParams().pageSize)
 
-    params = params.append("workShiftId", this.workShiftParams().workShiftId);
-    params = params.append("employeeId", this.workShiftParams().employeeId);
+    if (this.workShiftParams().workShiftId != null){
+      params = params.append("workShiftId", this.workShiftParams().workShiftId!);
+    }
+    if (this.workShiftParams().employeeId != null){
+      params = params.append("employeeId", this.workShiftParams().employeeId!);
+    }
     params = params.append("dateFrom", this.workShiftParams().dateFrom as string);
     params = params.append("dateTo", this.workShiftParams().dateTo as string);
     params = params.append("orderBy", this.workShiftParams().orderBy as string);
