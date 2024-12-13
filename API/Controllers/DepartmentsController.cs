@@ -5,13 +5,14 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Authorize]
 public class DepartmentsController(IDepartmentRepository departmentRepository, IUserRepository userRepository,
-    IMapper mapper) : BaseApiController
+    IMapper mapper, UserManager<AppUser> userManager) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<DepartmentDto>>> GetDepartments(
@@ -84,7 +85,12 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
         
         department.Managers.Add(manager);
 
-        if (await departmentRepository.Complete()) return NoContent();
+        if (await departmentRepository.Complete())
+        {
+            await userManager.AddToRoleAsync(manager, "Manager");
+            await userManager.RemoveFromRoleAsync(manager, "User");
+            return NoContent();
+        }
         return BadRequest("Failed to add manager");
     }
 
@@ -102,7 +108,12 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
         
         department.Managers.Remove(manager);
 
-        if (await departmentRepository.Complete()) return NoContent();
+        if (await departmentRepository.Complete())
+        {
+            await userManager.AddToRoleAsync(manager, "User");
+            await userManager.RemoveFromRoleAsync(manager, "Manager");
+            return NoContent();
+        }
         return BadRequest("Failed to remove manager");
     }
 }
