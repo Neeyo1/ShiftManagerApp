@@ -26,7 +26,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         userToReturn.Token = await tokenService.CreateToken(user);
 
         var refreshToken = await tokenService.CreateRefreshToken(user.UserName);
-        userToReturn.RefreshToken = refreshToken.Token;
+        HttpContext.SetRefreshToken(refreshToken.Token);
 
         return userToReturn;
     }
@@ -46,23 +46,26 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         userToReturn.Token = await tokenService.CreateToken(user);
 
         var refreshToken = await tokenService.CreateRefreshToken(user.UserName);
-        userToReturn.RefreshToken = refreshToken.Token;
+        HttpContext.SetRefreshToken(refreshToken.Token);
 
         return userToReturn;
     }
 
     [HttpPost("refresh")]
-    public async Task<ActionResult<UserDto>> Refresh(RefreshTokenDto refreshTokenDto)
+    public async Task<ActionResult<UserDto>> Refresh(TokenDto tokenDto)
     {
-        var principal = tokenService.GetPrincipalFromExpiredToken(refreshTokenDto.Token);
+        var principal = tokenService.GetPrincipalFromExpiredToken(tokenDto.Token);
         if (principal == null) 
         {
             return BadRequest("Invalid token");
         }
 
         var username = principal.GetUsername();
-        var storedRefreshToken = await tokenService.GetRefreshToken(username, refreshTokenDto.RefreshToken);
 
+        var refreshToken = HttpContext.GetRefreshToken();
+        if (refreshToken == null) return Unauthorized("No refresh token was provided");
+
+        var storedRefreshToken = await tokenService.GetRefreshToken(username, refreshToken);
         if (storedRefreshToken == null) return Unauthorized("Invalid refresh token");
 
         if (storedRefreshToken.ExpiryDate < DateTime.UtcNow) 
@@ -80,7 +83,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
             userToReturn.Token = await tokenService.CreateToken(user);
             
             var newRefreshToken = await tokenService.CreateRefreshToken(username);
-            userToReturn.RefreshToken = newRefreshToken.Token;
+            HttpContext.SetRefreshToken(newRefreshToken.Token);
 
             return userToReturn;
         }
