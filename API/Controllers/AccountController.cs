@@ -25,6 +25,9 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         var userToReturn = mapper.Map<UserDto>(user);
         userToReturn.Token = await tokenService.CreateToken(user);
 
+        var refreshToken = await tokenService.CreateRefreshToken(user.UserName);
+        userToReturn.RefreshToken = refreshToken.Token;
+
         return userToReturn;
     }
 
@@ -33,7 +36,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     public async Task<ActionResult<UserDto>> ChangePassword(UserEditPasswordDto userEditPasswordDto)
     {
         var user = await userManager.FindByNameAsync(User.GetUsername());
-        if (user == null) return BadRequest("Could not find user");
+        if (user == null || user.UserName == null) return BadRequest("Could not find user");
 
         var result = await userManager.ChangePasswordAsync(user, userEditPasswordDto.CurrentPassword, 
             userEditPasswordDto.NewPassword);
@@ -42,6 +45,45 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         var userToReturn = mapper.Map<UserDto>(user);
         userToReturn.Token = await tokenService.CreateToken(user);
 
+        var refreshToken = await tokenService.CreateRefreshToken(user.UserName);
+        userToReturn.RefreshToken = refreshToken.Token;
+
         return userToReturn;
+    }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult<UserDto>> Refresh(RefreshTokenDto refreshTokenDto)
+    {
+        var principal = tokenService.GetPrincipalFromExpiredToken(refreshTokenDto.Token);
+        if (principal == null) 
+        {
+            return BadRequest("Invalid token");
+        }
+
+        var username = principal.GetUsername();
+        var storedRefreshToken = await tokenService.GetRefreshToken(username, refreshTokenDto.RefreshToken);
+
+        if (storedRefreshToken == null) return Unauthorized("Invalid refresh token");
+
+        if (storedRefreshToken.ExpiryDate < DateTime.UtcNow) 
+        {
+            return Unauthorized("Invalid refresh token");
+        }
+
+        var user = await userManager.FindByNameAsync(username);
+        if (user == null || user.UserName == null) return BadRequest("Could not find user");
+
+        tokenService.RemoveRefreshToken(storedRefreshToken);
+        if (await tokenService.Complete())
+        {
+            var userToReturn = mapper.Map<UserDto>(user);
+            userToReturn.Token = await tokenService.CreateToken(user);
+            
+            var newRefreshToken = await tokenService.CreateRefreshToken(username);
+            userToReturn.RefreshToken = newRefreshToken.Token;
+
+            return userToReturn;
+        }
+        return BadRequest("Failed to refresh token");
     }
 }

@@ -1,14 +1,17 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using API.Data;
 using API.Entities;
 using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration config, UserManager<AppUser> userManager) : ITokenService
+public class TokenService(IConfiguration config, UserManager<AppUser> userManager,
+    DataContext context) : ITokenService
 {
     public async Task<string> CreateToken(AppUser user)
     {
@@ -33,7 +36,7 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddDays(7),
+            Expires = DateTime.UtcNow.AddMinutes(5),
             SigningCredentials = creds
         };
 
@@ -41,5 +44,77 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<RefreshToken> CreateRefreshToken(string username)
+    {
+        var refreshToken = new RefreshToken
+        {
+            Token = Guid.NewGuid().ToString(),
+            Username = username,
+            ExpiryDate = DateTime.UtcNow.AddDays(7)
+        };
+
+        AddRefreshToken(refreshToken);
+
+        if (await Complete()) return refreshToken;
+        throw new Exception("Cannot generate refresh token");
+    }
+
+    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot acces tokey key from app settings");
+        if (tokenKey.Length < 64) throw new Exception("You token key needs to be longer");
+
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = false
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, 
+                out SecurityToken securityToken);
+
+            if (securityToken is not JwtSecurityToken jwtSecurityToken 
+                || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, 
+                    StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
+
+            return principal;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public void AddRefreshToken(RefreshToken refreshToken)
+    {
+        context.RefreshTokens.Add(refreshToken);
+    }
+
+    public void RemoveRefreshToken(RefreshToken refreshToken)
+    {
+        context.RefreshTokens.Remove(refreshToken);
+    }
+
+    public async Task<RefreshToken?> GetRefreshToken(string username, string token)
+    {
+        return await context.RefreshTokens
+            .FirstOrDefaultAsync(x => x.Username == username && x.Token == token);
+    }
+
+    public async Task<bool> Complete()
+    {
+        return await context.SaveChangesAsync() > 0;
     }
 }
