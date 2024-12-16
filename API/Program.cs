@@ -1,6 +1,7 @@
 using System.Text;
 using API.Data;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
@@ -26,6 +27,7 @@ builder.Services.AddScoped<IWorkShiftRepository, WorkShiftRepository>();
 builder.Services.AddScoped<IWorkRecordRepository, WorkRecordRepository>();
 builder.Services.AddScoped<ISummaryRepository, SummaryRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<LogUserActivity>();
 builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<DataContext>(opt =>
