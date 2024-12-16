@@ -25,17 +25,12 @@ export class AppComponent implements OnInit{
     const userString = localStorage.getItem("user");
     if (!userString) return;
     const user = JSON.parse(userString);
-    if (this.tokenExpired(user.token)){
-      localStorage.removeItem("user");
-      return;
+    if (this.accountService.tokenExpired(user.token)){
+      this.accountService.refreshToken(user.token).subscribe();
+    } else{
+      this.accountService.setCurrentUser(user);
+      this.getUnreadMessages();
     }
-    this.accountService.setCurrentUser(user);
-    this.getUnreadMessages();
-  }
-
-  private tokenExpired(token: string) {
-    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
-    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
   }
 
   getUnreadMessages(){

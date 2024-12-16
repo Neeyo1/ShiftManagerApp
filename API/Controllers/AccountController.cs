@@ -63,14 +63,14 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         var username = principal.GetUsername();
 
         var refreshToken = HttpContext.GetRefreshToken();
-        if (refreshToken == null) return Unauthorized("No refresh token was provided");
+        if (refreshToken == null) return BadRequest("No refresh token was provided");
 
         var storedRefreshToken = await tokenService.GetRefreshToken(username, refreshToken);
-        if (storedRefreshToken == null) return Unauthorized("Invalid refresh token");
+        if (storedRefreshToken == null) return BadRequest("Invalid refresh token");
 
         if (storedRefreshToken.ExpiryDate < DateTime.UtcNow) 
         {
-            return Unauthorized("Invalid refresh token");
+            return BadRequest("Invalid refresh token");
         }
 
         var user = await userManager.FindByNameAsync(username);
