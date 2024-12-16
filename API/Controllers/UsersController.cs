@@ -68,7 +68,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
     public async Task<ActionResult> EditUserPassword(int userId, AdminEditPasswordDto adminEditPasswordDto)
     {
         var user = await userRepository.GetUserByIdAsync(userId);
-        if (user == null) return NotFound();
+        if (user == null) return BadRequest("Failed to find user");
 
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
         var passwordChangeResult = await userManager.ResetPasswordAsync(user, resetToken, adminEditPasswordDto.NewPassword);
@@ -82,7 +82,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
     public async Task<ActionResult> DeleteUser(int userId)
     {
         var user = await userRepository.GetUserByIdAsync(userId);
-        if (user == null) return NotFound();
+        if (user == null) return BadRequest("Failed to find user");
 
         var roles = await userManager.GetRolesAsync(user);
         if (roles.Contains("Admin")) return BadRequest("You cannot delete admin user");

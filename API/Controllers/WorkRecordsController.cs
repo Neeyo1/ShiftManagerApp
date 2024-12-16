@@ -38,7 +38,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     {
         //Todo Cooldown between actions
         var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null) return NotFound();
+        if (employee == null) return BadRequest("Failed to find employee");
 
         var timeNow = DateTime.UtcNow;
 
@@ -87,7 +87,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     public async Task<ActionResult<WorkRecordDto>> EditWorkRecord(WorkRecordEditDto workRecordEditDto, int workRecordId)
     {
         var workRecord = await workRecordRepository.GetWorkRecordByIdAsync(workRecordId);
-        if (workRecord == null) return NotFound();
+        if (workRecord == null) return BadRequest("Failed to find work record");
 
         mapper.Map(workRecordEditDto, workRecord);
 
@@ -105,7 +105,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     public async Task<ActionResult> DeleteWorkRecord(int workRecordId)
     {
         var workRecord = await workRecordRepository.GetWorkRecordByIdAsync(workRecordId);
-        if (workRecord == null) return NotFound();
+        if (workRecord == null) return BadRequest("Failed to find work record");
         
         workRecordRepository.DeleteWorkRecord(workRecord);
 

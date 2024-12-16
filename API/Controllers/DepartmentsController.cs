@@ -50,7 +50,7 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     public async Task<ActionResult<DepartmentDto>> EditDepartment(DepartmentCreateDto departmentEditDto, int departmentId)
     {
         var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
-        if (department == null) return NotFound();
+        if (department == null) return BadRequest("Failed to find department");
 
         mapper.Map(departmentEditDto, department);
 
@@ -63,7 +63,7 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     public async Task<ActionResult> DeleteDepartment(int departmentId)
     {
         var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
-        if (department == null) return NotFound();
+        if (department == null) return BadRequest("Failed to find department");
         
         departmentRepository.DeleteDepartment(department);
 
@@ -76,10 +76,10 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     public async Task<ActionResult> AddManager(int departmentId, int managerId)
     {
         var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
-        if (department == null) return NotFound();
+        if (department == null) return BadRequest("Failed to find department");
 
         var manager = await userRepository.GetUserDetailedByIdAsync(managerId);
-        if (manager == null) return NotFound();
+        if (manager == null) return BadRequest("Failed to find manager");
         if (manager.DepartmentId != null)
             return BadRequest($"This person is already manager of '{manager.Department!.Name}' department");
         
@@ -99,10 +99,10 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     public async Task<ActionResult> RemoveManager(int departmentId, int managerId)
     {
         var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
-        if (department == null) return NotFound();
+        if (department == null) return BadRequest("Failed to find department");
 
         var manager = await userRepository.GetUserByIdAsync(managerId);
-        if (manager == null) return NotFound();
+        if (manager == null) return BadRequest("Failed to find manager");
         if (manager.DepartmentId != department.Id)
             return BadRequest("This person is not manager of this department");
         

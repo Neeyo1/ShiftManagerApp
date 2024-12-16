@@ -48,7 +48,7 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     public async Task<ActionResult<EmployeeDto>> EditEmployee(EmployeeCreateDto employeeEditDto, int employeeId)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null) return NotFound();
+        if (employee == null) return BadRequest("Failed to find employee");
 
         mapper.Map(employeeEditDto, employee);
 
@@ -61,7 +61,7 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     public async Task<ActionResult> DeleteEmployee(int employeeId)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null) return NotFound();
+        if (employee == null) return BadRequest("Failed to find employee");
         
         employeeRepository.DeleteEmployee(employee);
 
@@ -74,7 +74,7 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     public async Task<ActionResult<EmployeeDto>> ActiveEmployee(int employeeId)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null) return NotFound();
+        if (employee == null) return BadRequest("Failed to find employee");
 
         if (employee.IsActive == true) return BadRequest("This employee is already activated");
         employee.IsActive = true;
@@ -88,7 +88,7 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     public async Task<ActionResult<EmployeeDto>> DeactiveEmployee(int employeeId)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
-        if (employee == null) return NotFound();
+        if (employee == null) return BadRequest("Failed to find employee");
 
         if (employee.IsActive == false) return BadRequest("This employee is not activated yet");
         employee.IsActive = false;

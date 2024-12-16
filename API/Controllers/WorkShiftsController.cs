@@ -37,7 +37,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     public async Task<ActionResult<WorkShiftDto>> CreateWorkShift(WorkShiftCreateDto workShiftCreateDto)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(workShiftCreateDto.EmployeeId);
-        if (employee == null) return NotFound();
+        if (employee == null) return BadRequest("Failed to find employee");
 
         var today = DateOnly.FromDateTime(DateTime.Now);
         var dateFrom = DateOnly.Parse(workShiftCreateDto.DateFrom);
@@ -77,7 +77,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     public async Task<ActionResult<WorkShiftDto>> EditWorkShift(WorkShiftEditDto workShiftEditDto, int workShiftId)
     {
         var workShift = await workShiftRepository.GetWorkShiftByIdAsync(workShiftId);
-        if (workShift == null) return NotFound();
+        if (workShift == null) return BadRequest("Failed to find work shift");
 
         mapper.Map(workShiftEditDto, workShift);
 
@@ -92,7 +92,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     public async Task<ActionResult> DeleteWorkShift(int workShiftId)
     {
         var workShift = await workShiftRepository.GetWorkShiftByIdAsync(workShiftId);
-        if (workShift == null) return NotFound();
+        if (workShift == null) return BadRequest("Failed to find work shift");
         
         workShiftRepository.DeleteWorkShift(workShift);
 

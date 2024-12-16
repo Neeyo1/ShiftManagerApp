@@ -61,7 +61,7 @@ public class NotificationsController(INotificationRepository notificationReposit
     public async Task<ActionResult<NotificationDto>> CreateDummyNotification()
     {
         var user = await userRepository.GetUserByIdAsync(User.GetUserId());
-        if (user == null) return NotFound();
+        if (user == null) return BadRequest("Failed to find user");
 
         var notification = new Notification
         {
