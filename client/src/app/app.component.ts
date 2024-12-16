@@ -29,11 +29,6 @@ export class AppComponent implements OnInit{
       this.accountService.refreshToken(user.token).subscribe();
     } else{
       this.accountService.setCurrentUser(user);
-      this.getUnreadMessages();
     }
-  }
-
-  getUnreadMessages(){
-    this.notificationService.getUnreadNotificationsCount();
   }
 }
