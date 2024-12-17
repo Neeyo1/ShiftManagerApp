@@ -90,6 +90,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
         if (workRecord == null) return BadRequest("Failed to find work record");
 
         mapper.Map(workRecordEditDto, workRecord);
+        workRecord.MinutesInWork = Math.Ceiling((workRecord.End!.Value - workRecord.Start).TotalMinutes);
 
         if (workRecord.Start > workRecord.End)
             return BadRequest("Start date cannot be later than end date");
