@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { PaginatedResult } from '../_models/pagination';
+import { PaginatedResult, Pagination } from '../_models/pagination';
 import { Department } from '../_models/department';
 import { DepartmentParams } from '../_models/departmentParams';
 import { of, tap } from 'rxjs';
@@ -16,6 +16,7 @@ export class DepartmentService {
   departmentCache = new Map();
   paginatedResult = signal<PaginatedResult<Department[]> | null>(null);
   departmentParams = signal<DepartmentParams>(new DepartmentParams);
+  myDepartment = signal<Department | null>(null);
 
   resetDepartmentParams(){
     this.departmentParams.set(new DepartmentParams);

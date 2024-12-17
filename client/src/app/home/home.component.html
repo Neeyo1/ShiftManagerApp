@@ -1,1 +1,10 @@
-<p>home works!</p>
+<h3>Your dashboard</h3>
+@if (accountService.currentUser()) {
+    @if (departmentService.myDepartment()) {
+        <p>You are manager of department '{{departmentService.myDepartment()?.name}}'</p>
+    } @else {
+        <p>You are not manager of any department yet</p>
+    }
+} @else {
+    <p>Log in to see your dashboard</p>
+}

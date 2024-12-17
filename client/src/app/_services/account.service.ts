@@ -65,6 +65,11 @@ export class AccountService {
     localStorage.setItem("user", JSON.stringify(user));
     this.currentUser.set(user);
     this.notificationService.getUnreadNotificationsCount();
+    if (user.departmentId){
+      this.departmentService.getDepartment(user.departmentId).subscribe({
+        next: department => this.departmentService.myDepartment.set(department)
+      });
+    }
     if (this.roles().includes("Manager")){
       this.notificationService.createHubConnection(user)
     }
@@ -109,6 +114,7 @@ export class AccountService {
     this.notificationService.unreadMessages.set(0);
     this.departmentService.departmentCache.clear();
     this.departmentService.resetDepartmentParams();
+    this.departmentService.myDepartment.set(null);
     this.employeeService.employeeCache.clear();
     this.employeeService.resetEmployeeParams();
     this.memberService.memberCache.clear();
