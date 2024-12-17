@@ -24,8 +24,7 @@
                             routerLink="/workrecords/{{workRecord.id}}">
                       Details
                     </button>
-                    @if (accountService.roles().includes("Manager")
-                        || accountService.roles().includes("Admin")) {
+                    @if (accountService.roles().includes("Admin")) {
                       <button class="btn btn-info" 
                               (click)="editWorkRecord(workRecord)">
                         Edit
