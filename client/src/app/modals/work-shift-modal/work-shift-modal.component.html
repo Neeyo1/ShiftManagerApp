@@ -14,21 +14,31 @@
             <div class="col-8">
                 <form [formGroup]="workShiftForm" id="workShiftForm" (ngSubmit)="complete()" autocomplete="off">
                     @if (!workShift) {
-                        <app-date-picker
-                            [formControl]="$any(workShiftForm.controls['dateFrom'])"
-                            [label]="'Date from'"
-                        ></app-date-picker>
-
-                        <app-date-picker
-                            [formControl]="$any(workShiftForm.controls['dateTo'])"
-                            [label]="'Date to'"
-                        ></app-date-picker>
-
                         <app-text-input 
                             [formControl]="$any(workShiftForm.controls['employeeId'])"
                             [label]="'Employee ID'"
                             [type]="'number'">
                         </app-text-input>
+
+                        <div class="mb-3 form-floating">
+                            <input 
+                                [class.is-invalid]="$any(workShiftForm.controls['dateRange']).touched 
+                                    && $any(workShiftForm.controls['dateRange']).invalid"
+                                class="form-control" 
+                                [formControl]="$any(workShiftForm.controls['dateRange'])"
+                                placeholder="Date(s)"
+                                bsDaterangepicker
+                                [bsConfig]="{
+                                    containerClass: 'theme-dark-blue',
+                                    dateInputFormat: 'DD-MM-YYYY'
+                                  }">
+                            <label>Date(s)</label>
+                            @if ($any(workShiftForm.controls['dateRange']).hasError('required')) {
+                                <div class="invalid-feedback text start">
+                                    Date(s) must contain date
+                                </div>
+                            }
+                        </div>
                     } @else {
                         <app-date-picker
                             [formControl]="$any(workShiftForm.controls['startDate'])"
@@ -36,17 +46,14 @@
                         ></app-date-picker>
                     }
 
-                    <app-text-input 
-                        [formControl]="$any(workShiftForm.controls['startHour'])"
-                        [label]="'Start hour'"
-                        [type]="'number'">
-                    </app-text-input>
-
-                    <app-text-input 
-                        [formControl]="$any(workShiftForm.controls['startMinute'])"
-                        [label]="'Start minute'"
-                        [type]="'number'">
-                    </app-text-input>
+                    <div class="mb-3">
+                        <label>Start time</label>
+                        <timepicker 
+                            [formControl]="$any(workShiftForm.controls['start'])"
+                            [showMeridian]="false"
+                            ngDefaultControl>
+                        </timepicker>
+                    </div>
 
                     <app-text-input 
                         [formControl]="$any(workShiftForm.controls['shiftLength'])"

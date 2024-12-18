@@ -153,11 +153,9 @@ export class ModalService {
       next: () => {
         if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
           let workShiftForm = this.bsModalRef.content.workShiftForm;
-          let time = new Date();
-          time.setHours(workShiftForm.value['startHour'], workShiftForm.value['startMinute'], 0);
-          workShiftForm.value['start'] = time.toISOString().slice(11,16);
-          workShiftForm.value['dateFrom'] = workShiftForm.value['dateFrom'].toISOString().slice(0,10);
-          workShiftForm.value['dateTo'] = workShiftForm.value['dateTo'].toISOString().slice(0,10);
+          workShiftForm.value['start'] = workShiftForm.value['start'].toISOString().slice(11,16);
+          workShiftForm.value['dateFrom'] = workShiftForm.value['dateRange'][0].toISOString().slice(0,10);
+          workShiftForm.value['dateTo'] = workShiftForm.value['dateRange'][1].toISOString().slice(0,10);
           this.workShiftService.createWorkShift(workShiftForm.value).subscribe({
             next: _ => this.workShiftService.getWorkShifts()
           })
@@ -180,9 +178,10 @@ export class ModalService {
       next: () => {
         if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
           let workShiftForm = this.bsModalRef.content.workShiftForm;
-          let time = new Date(workShiftForm.value['startDate']);
-          time.setHours(workShiftForm.value['startHour'], workShiftForm.value['startMinute'], 0);
-          workShiftForm.value['start'] = time.toISOString();
+          let date = new Date(workShiftForm.value['startDate']);
+          let time = workShiftForm.value['start'].toString().slice(16,21);
+          date.setHours(Number(time.slice(0,2)), Number(time.slice(3,5)), 0);
+          workShiftForm.value['start'] = date.toISOString();
           this.workShiftService.editWorkShift(workShift.id, workShiftForm.value).subscribe({
             next: _ => this.workShiftService.getWorkShifts()
           })

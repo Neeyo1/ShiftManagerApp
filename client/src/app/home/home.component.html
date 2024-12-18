@@ -2,6 +2,19 @@
 @if (accountService.currentUser()) {
     @if (departmentService.myDepartment()) {
         <p>You are manager of department '{{departmentService.myDepartment()?.name}}'</p>
+        <h4>Quick access</h4>
+        <button class="btn btn-primary"
+                routerLink="/departments/{{departmentService.myDepartment()!.id}}">
+            Go to details
+        </button>
+        <button class="btn btn-primary"
+                (click)="createWorkShift()">
+            Add work shift
+        </button>
+        <button class="btn btn-primary"
+                (click)="sendNotification(departmentService.myDepartment()!.id)">
+            Send notification
+        </button>
     } @else {
         <p>You are not manager of any department yet</p>
     }
