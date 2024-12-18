@@ -36,11 +36,12 @@ export class ModalService {
   private workRecordService = inject(WorkRecordService);
   private memberService = inject(MemberService);
 
-  openChangePasswordModal(){
+  openChangePasswordModal(memberId?: number){
     const config: ModalOptions = {
       class: 'modal-lg',
       initialState:{
-        completed: false
+        completed: false,
+        forceChange: memberId
       }
     };
     this.bsModalRef = this.modalService.show(ChangePasswordModalComponent, config);
@@ -49,9 +50,15 @@ export class ModalService {
         if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
           const changePasswordForm = this.bsModalRef.content.changePasswordForm;
 
-          this.accountService.changePassword(changePasswordForm.value).subscribe({
-            next: _ => this.toastrService.success("Password changed successfully")
-          })
+          if (memberId){
+            this.memberService.editPassword(memberId, changePasswordForm.value).subscribe({
+              next: _ => this.toastrService.success("Password changed successfully")
+            })
+          } else{
+            this.accountService.changePassword(changePasswordForm.value).subscribe({
+              next: _ => this.toastrService.success("Password changed successfully")
+            })
+          }
         }
       }
     })

@@ -13,6 +13,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 export class ChangePasswordModalComponent implements OnInit{
   bsModalRef = inject(BsModalRef);
   completed = false;
+  forceChange = false;
   private fb = inject(FormBuilder);
   changePasswordForm: FormGroup = new FormGroup({});
   validationErrors: string[] | undefined;
@@ -22,12 +23,21 @@ export class ChangePasswordModalComponent implements OnInit{
   }
 
   initializeForm(){
-    this.changePasswordForm = this.fb.group({
-      currentPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(12),
-        this.hasNumber(), this.hasLowerCase(), this.hasUpperCase()]],
-      confirmNewPassword: ['', [Validators.required, this.matchValues('newPassword')]]
-    });
+    if (this.forceChange){
+      this.changePasswordForm = this.fb.group({
+        newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(12),
+          this.hasNumber(), this.hasLowerCase(), this.hasUpperCase()]],
+        confirmNewPassword: ['', [Validators.required, this.matchValues('newPassword')]]
+      });
+    } else{
+      this.changePasswordForm = this.fb.group({
+        currentPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(12),
+          this.hasNumber(), this.hasLowerCase(), this.hasUpperCase()]],
+        confirmNewPassword: ['', [Validators.required, this.matchValues('newPassword')]]
+      });
+    }
+    
     this.changePasswordForm.controls['newPassword'].valueChanges.subscribe({
       next: () => this.changePasswordForm.controls['confirmNewPassword'].updateValueAndValidity()
     });

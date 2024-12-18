@@ -65,11 +65,7 @@ export class MemberService {
   }
 
   editPassword(memberId: number, model: any){
-    return this.http.put<Member>(this.baseUrl + `users/${memberId}`, model).pipe(
-      tap(() => {
-        this.memberCache.clear();
-      })
-    );
+    return this.http.put(this.baseUrl + `users/${memberId}`, model);
   }
 
   deleteMember(memberId: number){

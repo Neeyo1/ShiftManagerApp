@@ -41,7 +41,7 @@ export class MemberListComponent implements OnInit, OnDestroy{
   }
 
   changePassword(memberId: number){
-    this.toastrService.info("Change password modal");
+    this.myModalService.openChangePasswordModal(memberId);
   }
 
   deleteMember(memberId: number){
