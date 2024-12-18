@@ -18,6 +18,12 @@ export class NotificationFilterComponent {
     {value: 'unread', display: 'Unread'},
     {value: 'all', display: 'All'}
   ];
+  orderByList = [
+    {value: 'received', display: 'Received ascending'},
+    {value: 'received-desc', display: 'Received descending'},
+    {value: 'read', display: 'Read ascending'},
+    {value: 'read-desc', display: 'Read descending'}
+  ];
 
   loadNotifications(){
     this.notificationService.getNotifications();

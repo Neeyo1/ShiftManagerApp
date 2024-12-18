@@ -59,6 +59,7 @@ export class NotificationService {
     let params = setPaginationHeaders(this.notificationParams().pageNumber, this.notificationParams().pageSize)
 
     params = params.append("status", this.notificationParams().status as string);
+    params = params.append("orderBy", this.notificationParams().orderBy as string);
 
     return this.http.get<Notification[]>(this.baseUrl + "notifications", {observe: 'response', params}).subscribe({
       next: response => {

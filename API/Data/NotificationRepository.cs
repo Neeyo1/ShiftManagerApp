@@ -33,6 +33,15 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
             _ => query
         };
 
+        query = notificationParams.OrderBy switch
+        {
+            "received" => query.OrderBy(x => x.CreatedAt),
+            "received-desc" => query.OrderByDescending(x => x.CreatedAt),
+            "read" => query.OrderBy(x => x.ReadAt),
+            "read-desc" => query.OrderByDescending(x => x.ReadAt),
+            _ => query.OrderByDescending(x => x.CreatedAt),
+        };
+
         return await PagedList<NotificationDto>.CreateAsync(
             query.ProjectTo<NotificationDto>(mapper.ConfigurationProvider), 
             notificationParams.PageNumber, notificationParams.PageSize);

@@ -16,6 +16,17 @@
                 <label>Status</label>
             </div>
 
+            <div class="mb-3 form-floating">
+                <select name="orderBy" 
+                        class="form-select" 
+                        [(ngModel)]="notificationService.notificationParams().orderBy">
+                    @for (orderBy of orderByList; track orderBy.value) {
+                        <option [value]="orderBy.value">{{orderBy.display}}</option>
+                    }
+                </select>
+                <label>Order by</label>
+            </div>
+
             <div class="form-group text-center">
                 <button class="btn btn-primary" type="submit">
                     Filter
