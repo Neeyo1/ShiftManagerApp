@@ -70,9 +70,4 @@ public class EmployeeRepository(DataContext context, IMapper mapper) : IEmployee
         return await context.Employees
             .FindAsync(employeeId);
     }
-
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

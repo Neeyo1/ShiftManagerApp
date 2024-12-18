@@ -11,5 +11,4 @@ public interface IDepartmentRepository
     Task<PagedList<DepartmentDto>> GetDepartmentsAsync(DepartmentParams departmentParams);
     Task<Department?> GetDepartmentByIdAsync(int departmentId);
     Task<Department?> GetDepartmentDetailedByIdAsync(int departmentId);
-    Task<bool> Complete();
 }

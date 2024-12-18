@@ -10,5 +10,4 @@ public interface IEmployeeRepository
     void DeleteEmployee(Employee employee);
     Task<PagedList<EmployeeDto>> GetEmployeesAsync(EmployeeParams employeeParams);
     Task<Employee?> GetEmployeeByIdAsync(int employeeId);
-    Task<bool> Complete();
 }

@@ -11,14 +11,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class DepartmentsController(IDepartmentRepository departmentRepository, IUserRepository userRepository,
-    IMapper mapper, UserManager<AppUser> userManager) : BaseApiController
+public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper, 
+    UserManager<AppUser> userManager) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<DepartmentDto>>> GetDepartments(
         [FromQuery] DepartmentParams departmentParams)
     {
-        var departments = await departmentRepository.GetDepartmentsAsync(departmentParams);
+        var departments = await unitOfWork.DepartmentRepository.GetDepartmentsAsync(departmentParams);
         Response.AddPaginationHeader(departments);
         
         return Ok(departments);
@@ -27,7 +27,7 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     [HttpGet("{departmentId}")]
     public async Task<ActionResult<DepartmentDto>> GetDepartment(int departmentId)
     {
-        var department = await departmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return NotFound();
 
         return Ok(mapper.Map<DepartmentDto>(department));
@@ -39,9 +39,9 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     {
         var department = mapper.Map<Department>(departmentCreateDto);
 
-        departmentRepository.AddDepartment(department);
+        unitOfWork.DepartmentRepository.AddDepartment(department);
 
-        if (await departmentRepository.Complete()) return Ok(mapper.Map<DepartmentDto>(department));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<DepartmentDto>(department));
         return BadRequest("Failed to create department");
     }
 
@@ -49,12 +49,12 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     [HttpPut("{departmentId}")]
     public async Task<ActionResult<DepartmentDto>> EditDepartment(DepartmentCreateDto departmentEditDto, int departmentId)
     {
-        var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
         mapper.Map(departmentEditDto, department);
 
-        if (await departmentRepository.Complete()) return Ok(mapper.Map<DepartmentDto>(department));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<DepartmentDto>(department));
         return BadRequest("Failed to edit department");
     }
 
@@ -62,12 +62,12 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     [HttpDelete("{departmentId}")]
     public async Task<ActionResult> DeleteDepartment(int departmentId)
     {
-        var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
         
-        departmentRepository.DeleteDepartment(department);
+        unitOfWork.DepartmentRepository.DeleteDepartment(department);
 
-        if (await departmentRepository.Complete()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
         return BadRequest("Failed to delete department");
     }
 
@@ -75,17 +75,17 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     [HttpPost("{departmentId}/add-manager/{managerId}")]
     public async Task<ActionResult> AddManager(int departmentId, int managerId)
     {
-        var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
-        var manager = await userRepository.GetUserDetailedByIdAsync(managerId);
+        var manager = await unitOfWork.UserRepository.GetUserDetailedByIdAsync(managerId);
         if (manager == null) return BadRequest("Failed to find manager");
         if (manager.DepartmentId != null)
             return BadRequest($"This person is already manager of '{manager.Department!.Name}' department");
         
         department.Managers.Add(manager);
 
-        if (await departmentRepository.Complete())
+        if (await unitOfWork.Complete())
         {
             await userManager.AddToRoleAsync(manager, "Manager");
             await userManager.RemoveFromRoleAsync(manager, "User");
@@ -98,17 +98,17 @@ public class DepartmentsController(IDepartmentRepository departmentRepository, I
     [HttpPost("{departmentId}/remove-manager/{managerId}")]
     public async Task<ActionResult> RemoveManager(int departmentId, int managerId)
     {
-        var department = await departmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
-        var manager = await userRepository.GetUserByIdAsync(managerId);
+        var manager = await unitOfWork.UserRepository.GetUserByIdAsync(managerId);
         if (manager == null) return BadRequest("Failed to find manager");
         if (manager.DepartmentId != department.Id)
             return BadRequest("This person is not manager of this department");
         
         department.Managers.Remove(manager);
 
-        if (await departmentRepository.Complete())
+        if (await unitOfWork.Complete())
         {
             await userManager.AddToRoleAsync(manager, "User");
             await userManager.RemoveFromRoleAsync(manager, "Manager");

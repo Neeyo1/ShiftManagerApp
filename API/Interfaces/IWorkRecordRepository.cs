@@ -12,5 +12,4 @@ public interface IWorkRecordRepository
     Task<WorkRecord?> GetWorkRecordByIdAsync(int workRecordId);
     Task<WorkRecord?> GetLastWorkRecordAsync(int employeeId);
     Task<IEnumerable<WorkRecordDto>> GetWorkRecordsByEmployeeAndDateAsync(int employeeId, DateTime dateStart, DateTime dateEnd);
-    Task<bool> Complete();
 }

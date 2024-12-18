@@ -61,9 +61,4 @@ public class DepartmentRepository(DataContext context, IMapper mapper) : IDepart
             .Include(x => x.Employees)
             .FirstOrDefaultAsync(x => x.Id == departmentId);
     }
-
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize(Policy = "RequireManagerRole")]
-public class SummaryController(ISummaryRepository summaryRepository) : BaseApiController
+public class SummaryController(IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SummaryDto>>> GetSymmaries([FromQuery] int employeeId,
         string date)
     {
         var dateAsDateOnly = DateOnly.Parse(date);
-        var summaries = await summaryRepository.GetSummaryAsync(employeeId, dateAsDateOnly);
+        var summaries = await unitOfWork.SummaryRepository.GetSummaryAsync(employeeId, dateAsDateOnly);
         return Ok(summaries);
     }
 }

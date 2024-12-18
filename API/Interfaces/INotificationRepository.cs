@@ -10,5 +10,4 @@ public interface INotificationRepository
     void DeleteNotification(Notification notification);
     Task<PagedList<NotificationDto>> GetNotificationsAsync(NotificationParams notificationParams);
     Task<Notification?> GetNotificationByIdAsync(int notificationId);
-    Task<bool> Complete();
 }

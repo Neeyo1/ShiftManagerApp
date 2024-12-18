@@ -92,8 +92,4 @@ public class WorkRecordRepository(DataContext context, IMapper mapper) : IWorkRe
             .ProjectTo<WorkRecordDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

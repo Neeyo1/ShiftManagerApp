@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService,
-    IMapper mapper) : BaseApiController
+    IMapper mapper, IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
@@ -77,7 +77,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         if (user == null || user.UserName == null) return BadRequest("Could not find user");
 
         tokenService.RemoveRefreshToken(storedRefreshToken);
-        if (await tokenService.Complete())
+        if (await unitOfWork.Complete())
         {
             var userToReturn = mapper.Map<UserDto>(user);
             userToReturn.Token = await tokenService.CreateToken(user);

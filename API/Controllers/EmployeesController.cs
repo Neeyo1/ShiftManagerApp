@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class EmployeesController(IEmployeeRepository employeeRepository, IMapper mapper) : BaseApiController
+public class EmployeesController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<EmployeeDto>>> GetEmployees(
         [FromQuery] EmployeeParams employeeParams)
     {
-        var employees = await employeeRepository.GetEmployeesAsync(employeeParams);
+        var employees = await unitOfWork.EmployeeRepository.GetEmployeesAsync(employeeParams);
         Response.AddPaginationHeader(employees);
         
         return Ok(employees);
@@ -25,7 +25,7 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     [HttpGet("{employeeId}")]
     public async Task<ActionResult<EmployeeDto>> GetEmployee(int employeeId)
     {
-        var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return NotFound();
 
         return Ok(mapper.Map<EmployeeDto>(employee));
@@ -37,9 +37,9 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     {
         var employee = mapper.Map<Employee>(employeeCreateDto);
 
-        employeeRepository.AddEmployee(employee);
+        unitOfWork.EmployeeRepository.AddEmployee(employee);
 
-        if (await employeeRepository.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
         return BadRequest("Failed to create employee");
     }
 
@@ -47,12 +47,12 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     [HttpPut("{employeeId}")]
     public async Task<ActionResult<EmployeeDto>> EditEmployee(EmployeeCreateDto employeeEditDto, int employeeId)
     {
-        var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return BadRequest("Failed to find employee");
 
         mapper.Map(employeeEditDto, employee);
 
-        if (await employeeRepository.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
         return BadRequest("Failed to edit employee");
     }
 
@@ -60,12 +60,12 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     [HttpDelete("{employeeId}")]
     public async Task<ActionResult> DeleteEmployee(int employeeId)
     {
-        var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return BadRequest("Failed to find employee");
         
-        employeeRepository.DeleteEmployee(employee);
+        unitOfWork.EmployeeRepository.DeleteEmployee(employee);
 
-        if (await employeeRepository.Complete()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
         return BadRequest("Failed to delete employee");
     }
 
@@ -73,13 +73,13 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     [HttpPost("{employeeId}/active")]
     public async Task<ActionResult<EmployeeDto>> ActiveEmployee(int employeeId)
     {
-        var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return BadRequest("Failed to find employee");
 
         if (employee.IsActive == true) return BadRequest("This employee is already activated");
         employee.IsActive = true;
 
-        if (await employeeRepository.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
         return BadRequest("Failed to active employee");
     }
 
@@ -87,13 +87,13 @@ public class EmployeesController(IEmployeeRepository employeeRepository, IMapper
     [HttpPost("{employeeId}/deactive")]
     public async Task<ActionResult<EmployeeDto>> DeactiveEmployee(int employeeId)
     {
-        var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return BadRequest("Failed to find employee");
 
         if (employee.IsActive == false) return BadRequest("This employee is not activated yet");
         employee.IsActive = false;
 
-        if (await employeeRepository.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<EmployeeDto>(employee));
         return BadRequest("Failed to deactive employee");
     }
 }

@@ -12,13 +12,13 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUserRepository userRepository, IMapper mapper, 
+public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, 
     UserManager<AppUser> userManager, ITokenService tokenService) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] MemberParams memberParams)
     {
-        var members = await userRepository.GetMembersAsync(memberParams);
+        var members = await unitOfWork.UserRepository.GetMembersAsync(memberParams);
         Response.AddPaginationHeader(members);
         
         return Ok(members);
@@ -27,13 +27,13 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
     [HttpGet("{userId}")]
     public async Task<ActionResult<MemberDto>> GetUser(int userId)
     {
-        var user = await userRepository.GetUserDetailedByIdAsync(userId);
+        var user = await unitOfWork.UserRepository.GetUserDetailedByIdAsync(userId);
         if (user == null) return NotFound();
 
         var result = mapper.Map<MemberDto>(user);
         if (result.Role == "Admin")
         {
-            var currentUser = await userRepository.GetUserByIdAsync(User.GetUserId());
+            var currentUser = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
             if (currentUser == null) return NotFound();
 
             var roles = await userManager.GetRolesAsync(currentUser);
@@ -67,7 +67,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
     [HttpPut("{userId}")]
     public async Task<ActionResult> EditUserPassword(int userId, AdminEditPasswordDto adminEditPasswordDto)
     {
-        var user = await userRepository.GetUserByIdAsync(userId);
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
         if (user == null) return BadRequest("Failed to find user");
 
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
@@ -81,7 +81,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
     [HttpDelete("{userId}")]
     public async Task<ActionResult> DeleteUser(int userId)
     {
-        var user = await userRepository.GetUserByIdAsync(userId);
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
         if (user == null) return BadRequest("Failed to find user");
 
         var roles = await userManager.GetRolesAsync(user);

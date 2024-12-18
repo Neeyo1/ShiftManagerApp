@@ -78,9 +78,4 @@ public class WorkShiftRepository(DataContext context, IMapper mapper) : IWorkShi
         return await context.WorkShifts
             .FirstOrDefaultAsync(x => x.EmployeeId == employeeId && x.Date == date);
     }
-
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

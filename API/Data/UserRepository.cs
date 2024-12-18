@@ -84,9 +84,4 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), 
             memberParams.PageNumber, memberParams.PageSize);
     }
-
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

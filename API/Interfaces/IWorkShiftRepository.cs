@@ -11,5 +11,4 @@ public interface IWorkShiftRepository
     Task<PagedList<WorkShiftDto>> GetWorkShiftsAsync(WorkShiftParams workShiftParams);
     Task<WorkShift?> GetWorkShiftByIdAsync(int workShiftId);
     Task<WorkShift?> GetWorkShiftByEmployeeAndDateAsync(int employeeId, DateOnly date);
-    Task<bool> Complete();
 }

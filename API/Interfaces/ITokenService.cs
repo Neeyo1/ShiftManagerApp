@@ -11,5 +11,4 @@ public interface ITokenService
     void AddRefreshToken(RefreshToken refreshToken);
     void RemoveRefreshToken(RefreshToken refreshToken);
     Task<RefreshToken?> GetRefreshToken(string username, string token);
-    Task<bool> Complete();
 }

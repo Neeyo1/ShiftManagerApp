@@ -10,19 +10,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class NotificationsController(INotificationRepository notificationRepository, IUserRepository userRepository,
-    IMapper mapper) : BaseApiController
+public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<NotificationDto>>> GetNotifications(
         [FromQuery] NotificationParams notificationParams)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return NotFound();
 
         notificationParams.UserId = user.Id;
 
-        var notifications = await notificationRepository.GetNotificationsAsync(notificationParams);
+        var notifications = await unitOfWork.NotificationRepository.GetNotificationsAsync(notificationParams);
         Response.AddPaginationHeader(notifications);
         
         return Ok(notifications);
@@ -31,10 +30,10 @@ public class NotificationsController(INotificationRepository notificationReposit
     [HttpGet("{notificationId}")]
     public async Task<ActionResult<NotificationDetailedDto>> GetNotification(int notificationId)
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return NotFound();
 
-        var notification = await notificationRepository.GetNotificationByIdAsync(notificationId);
+        var notification = await unitOfWork.NotificationRepository.GetNotificationByIdAsync(notificationId);
         if (notification == null) return NotFound();
         if (notification.UserId != user.Id) return Unauthorized();
 
@@ -43,7 +42,7 @@ public class NotificationsController(INotificationRepository notificationReposit
             notification.IsRead = true;
             notification.ReadAt = DateTime.UtcNow;
 
-            if (await notificationRepository.Complete())
+            if (await unitOfWork.Complete())
             {
                 var result = mapper.Map<NotificationDetailedDto>(notification);
                 result.IsChanged = true;
@@ -60,7 +59,7 @@ public class NotificationsController(INotificationRepository notificationReposit
     [HttpPost]
     public async Task<ActionResult<NotificationDto>> CreateDummyNotification()
     {
-        var user = await userRepository.GetUserByIdAsync(User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Failed to find user");
 
         var notification = new Notification
@@ -70,9 +69,9 @@ public class NotificationsController(INotificationRepository notificationReposit
             UserId = user.Id
         };
 
-        notificationRepository.AddNotification(notification);
+        unitOfWork.NotificationRepository.AddNotification(notification);
 
-        if (await notificationRepository.Complete())
+        if (await unitOfWork.Complete())
             return NoContent();
         return BadRequest("Failed to read notification");
     }

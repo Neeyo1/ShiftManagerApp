@@ -52,8 +52,4 @@ public class NotificationRepository(DataContext context, IMapper mapper) : INoti
         return await context.Notifications
             .FindAsync(notificationId);
     }
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

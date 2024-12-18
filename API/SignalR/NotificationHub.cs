@@ -5,15 +5,14 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR;
 
-public class NotificationHub(IUserRepository userRepository, IDepartmentRepository departmentRepository, 
-    INotificationRepository notificationRepository) : Hub
+public class NotificationHub(IUnitOfWork unitOfWork) : Hub
 {
     public override async Task OnConnectedAsync()
     {
         if (Context.User == null) 
             throw new HubException("Cannot find user");
 
-        var user = await userRepository.GetUserByIdAsync(Context.User.GetUserId());
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(Context.User.GetUserId());
         if (user == null)
             throw new HubException("Cannot find user");
 
@@ -31,7 +30,7 @@ public class NotificationHub(IUserRepository userRepository, IDepartmentReposito
 
     public async Task SendNotification(int departmentId)
     {
-        var department = await departmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) throw new HubException("Cannot find department");
 
         foreach (var manager in department.Managers)
@@ -43,10 +42,10 @@ public class NotificationHub(IUserRepository userRepository, IDepartmentReposito
                 UserId = manager.Id
             };
 
-            notificationRepository.AddNotification(notification);
+            unitOfWork.NotificationRepository.AddNotification(notification);
         }
 
-        if (await notificationRepository.Complete())
+        if (await unitOfWork.Complete())
         {
             var groupName = $"group-department-{department.Id}";
             await Clients.Group(groupName).SendAsync("NewNotification");

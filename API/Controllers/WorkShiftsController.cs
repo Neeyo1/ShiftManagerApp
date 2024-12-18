@@ -10,14 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMapper mapper,
-    IEmployeeRepository employeeRepository) : BaseApiController
+public class WorkShiftsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<WorkShiftDto>>> GetWorkShifts(
         [FromQuery] WorkShiftParams workShiftParams)
     {
-        var workShifts = await workShiftRepository.GetWorkShiftsAsync(workShiftParams);
+        var workShifts = await unitOfWork.WorkShiftRepository.GetWorkShiftsAsync(workShiftParams);
         Response.AddPaginationHeader(workShifts);
         
         return Ok(workShifts);
@@ -26,7 +25,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     [HttpGet("{workShiftId}")]
     public async Task<ActionResult<WorkShiftDto>> GetWorkShift(int workShiftId)
     {
-        var workShift = await workShiftRepository.GetWorkShiftByIdAsync(workShiftId);
+        var workShift = await unitOfWork.WorkShiftRepository.GetWorkShiftByIdAsync(workShiftId);
         if (workShift == null) return NotFound();
 
         return Ok(mapper.Map<WorkShiftDto>(workShift));
@@ -36,7 +35,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     [HttpPost]
     public async Task<ActionResult<WorkShiftDto>> CreateWorkShift(WorkShiftCreateDto workShiftCreateDto)
     {
-        var employee = await employeeRepository.GetEmployeeByIdAsync(workShiftCreateDto.EmployeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(workShiftCreateDto.EmployeeId);
         if (employee == null) return BadRequest("Failed to find employee");
 
         var today = DateOnly.FromDateTime(DateTime.Now);
@@ -53,7 +52,7 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
 
         for (var date = dateFrom; date <= dateTo; date = date.AddDays(1))
         {
-            var workShift = await workShiftRepository.GetWorkShiftByEmployeeAndDateAsync(employee.Id, date);
+            var workShift = await unitOfWork.WorkShiftRepository.GetWorkShiftByEmployeeAndDateAsync(employee.Id, date);
             if (workShift != null) continue;
 
             var start = DateTime.SpecifyKind(new DateTime(date, hourStart), DateTimeKind.Utc);
@@ -65,10 +64,10 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
                 End = start.AddHours(workShiftCreateDto.ShiftLength),
                 EmployeeId = workShiftCreateDto.EmployeeId
             };
-            workShiftRepository.AddWorkShift(newWorkShift);
+            unitOfWork.WorkShiftRepository.AddWorkShift(newWorkShift);
         }
 
-        if (await workShiftRepository.Complete()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
         return BadRequest("Failed to create work shift");
     }
 
@@ -76,14 +75,14 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     [HttpPut("{workShiftId}")]
     public async Task<ActionResult<WorkShiftDto>> EditWorkShift(WorkShiftEditDto workShiftEditDto, int workShiftId)
     {
-        var workShift = await workShiftRepository.GetWorkShiftByIdAsync(workShiftId);
+        var workShift = await unitOfWork.WorkShiftRepository.GetWorkShiftByIdAsync(workShiftId);
         if (workShift == null) return BadRequest("Failed to find work shift");
 
         mapper.Map(workShiftEditDto, workShift);
 
         workShift.End = workShift.Start.AddHours(workShiftEditDto.ShiftLength);
 
-        if (await workShiftRepository.Complete()) return Ok(mapper.Map<WorkShiftDto>(workShift));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<WorkShiftDto>(workShift));
         return BadRequest("Failed to edit work shift");
     }
 
@@ -91,12 +90,12 @@ public class WorkShiftsController(IWorkShiftRepository workShiftRepository, IMap
     [HttpDelete("{workShiftId}")]
     public async Task<ActionResult> DeleteWorkShift(int workShiftId)
     {
-        var workShift = await workShiftRepository.GetWorkShiftByIdAsync(workShiftId);
+        var workShift = await unitOfWork.WorkShiftRepository.GetWorkShiftByIdAsync(workShiftId);
         if (workShift == null) return BadRequest("Failed to find work shift");
         
-        workShiftRepository.DeleteWorkShift(workShift);
+        unitOfWork.WorkShiftRepository.DeleteWorkShift(workShift);
 
-        if (await workShiftRepository.Complete()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
         return BadRequest("Failed to delete work shift");
     }
 }

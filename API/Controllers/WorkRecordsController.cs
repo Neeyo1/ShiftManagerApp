@@ -9,15 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class WorkRecordsController(IWorkRecordRepository workRecordRepository, IMapper mapper,
-    IEmployeeRepository employeeRepository) : BaseApiController
+public class WorkRecordsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
 {
     [Authorize]
     [HttpGet]
     public async Task<ActionResult<PagedList<WorkRecordDto>>> GetWorkRecords(
         [FromQuery] WorkRecordParams workRecordParams)
     {
-        var workRecords = await workRecordRepository.GetWorkRecordsAsync(workRecordParams);
+        var workRecords = await unitOfWork.WorkRecordRepository.GetWorkRecordsAsync(workRecordParams);
         Response.AddPaginationHeader(workRecords);
 
         return Ok(workRecords);
@@ -27,7 +26,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     [HttpGet("{workRecordId}")]
     public async Task<ActionResult<WorkRecordDto>> GetWorkRecord(int workRecordId)
     {
-        var workRecord = await workRecordRepository.GetWorkRecordByIdAsync(workRecordId);
+        var workRecord = await unitOfWork.WorkRecordRepository.GetWorkRecordByIdAsync(workRecordId);
         if (workRecord == null) return NotFound();
 
         return Ok(mapper.Map<WorkRecordDto>(workRecord));
@@ -37,12 +36,12 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     public async Task<ActionResult<WorkRecordDto>> CreateWorkRecord([FromQuery] int employeeId)
     {
         //Todo Cooldown between actions
-        var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+        var employee = await unitOfWork.EmployeeRepository.GetEmployeeByIdAsync(employeeId);
         if (employee == null) return BadRequest("Failed to find employee");
 
         var timeNow = DateTime.UtcNow;
 
-        var workRecord = await workRecordRepository.GetLastWorkRecordAsync(employeeId);
+        var workRecord = await unitOfWork.WorkRecordRepository.GetLastWorkRecordAsync(employeeId);
         if (workRecord == null || workRecord.End != null)
         {
             var newWorkRecord = new WorkRecord
@@ -50,8 +49,8 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
                 Start = timeNow,
                 EmployeeId = employeeId
             };
-            workRecordRepository.AddWorkRecord(newWorkRecord);
-            if (await workRecordRepository.Complete()) 
+            unitOfWork.WorkRecordRepository.AddWorkRecord(newWorkRecord);
+            if (await unitOfWork.Complete()) 
                 return Ok(mapper.Map<WorkRecordDto>(newWorkRecord));
         }
         else //workRecord.End == null
@@ -66,15 +65,15 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
                     Start = timeNow,
                     EmployeeId = employeeId
                 };
-                workRecordRepository.AddWorkRecord(newWorkRecord);
-                if (await workRecordRepository.Complete())
+                unitOfWork.WorkRecordRepository.AddWorkRecord(newWorkRecord);
+                if (await unitOfWork.Complete())
                     return Ok(mapper.Map<WorkRecordDto>(newWorkRecord));
             }
             else //employee left normally
             {
                 workRecord.End = timeNow;
                 workRecord.MinutesInWork = Math.Ceiling((workRecord.End.Value - workRecord.Start).TotalMinutes);
-                if (await workRecordRepository.Complete())
+                if (await unitOfWork.Complete())
                     return Ok(mapper.Map<WorkRecordDto>(workRecord));
             }
         }
@@ -86,7 +85,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     [HttpPut("{workRecordId}")]
     public async Task<ActionResult<WorkRecordDto>> EditWorkRecord(WorkRecordEditDto workRecordEditDto, int workRecordId)
     {
-        var workRecord = await workRecordRepository.GetWorkRecordByIdAsync(workRecordId);
+        var workRecord = await unitOfWork.WorkRecordRepository.GetWorkRecordByIdAsync(workRecordId);
         if (workRecord == null) return BadRequest("Failed to find work record");
 
         mapper.Map(workRecordEditDto, workRecord);
@@ -97,7 +96,7 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
         if (workRecord.Start.AddHours(14) < workRecord.End)
             return BadRequest("Work record cannot last longer than 14 hours");
 
-        if (await workRecordRepository.Complete()) return Ok(mapper.Map<WorkRecordDto>(workRecord));
+        if (await unitOfWork.Complete()) return Ok(mapper.Map<WorkRecordDto>(workRecord));
         return BadRequest("Failed to edit work record");
     }
 
@@ -105,12 +104,12 @@ public class WorkRecordsController(IWorkRecordRepository workRecordRepository, I
     [HttpDelete("{workRecordId}")]
     public async Task<ActionResult> DeleteWorkRecord(int workRecordId)
     {
-        var workRecord = await workRecordRepository.GetWorkRecordByIdAsync(workRecordId);
+        var workRecord = await unitOfWork.WorkRecordRepository.GetWorkRecordByIdAsync(workRecordId);
         if (workRecord == null) return BadRequest("Failed to find work record");
         
-        workRecordRepository.DeleteWorkRecord(workRecord);
+        unitOfWork.WorkRecordRepository.DeleteWorkRecord(workRecord);
 
-        if (await workRecordRepository.Complete()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
         return BadRequest("Failed to delete work record");
     }
 }
