@@ -26,5 +26,8 @@ Admins can:
 
 ## Demo
 
--- coming soon --
+https://shiftmanager.pl/
+
+Login: demo01
+Password: Demo1!@#
 
