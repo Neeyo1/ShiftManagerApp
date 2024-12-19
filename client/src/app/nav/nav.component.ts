@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { AccountService } from '../_services/account.service';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { ModalService } from '../_services/modal.service';
 import { NotificationService } from '../_services/notification.service';
 

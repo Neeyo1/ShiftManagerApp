@@ -4,7 +4,6 @@ import { NavComponent } from "./nav/nav.component";
 import { AccountService } from './_services/account.service';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { NotificationService } from './_services/notification.service';
-import { NotificationParams } from './_models/notificationParams';
 
 @Component({
   selector: 'app-root',

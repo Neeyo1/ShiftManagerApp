@@ -1,7 +1,7 @@
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { PaginatedResult, Pagination } from '../_models/pagination';
+import { PaginatedResult } from '../_models/pagination';
 import { Department } from '../_models/department';
 import { DepartmentParams } from '../_models/departmentParams';
 import { of, tap } from 'rxjs';
