@@ -44,11 +44,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
     this.myModalService.openEditEmployeeModal(employee);
   }
 
-  deleteEmployee(employeeId: number){
+  deleteEmployee(employee: Employee){
     this.myModalService.openConfirmModal("employee")?.subscribe({
       next: result => {
         if (result){
-          this.employeeService.deleteEmployee(employeeId).subscribe({
+          this.employeeService.deleteEmployee(employee).subscribe({
             next: _ => this.loadEmployees()
           });
         }
@@ -56,14 +56,14 @@ export class EmployeeListComponent implements OnInit, OnDestroy{
     })
   }
 
-  activeEmployee(employeeId: number){
-    this.employeeService.activeEmployee(employeeId).subscribe({
+  activeEmployee(employee: Employee){
+    this.employeeService.activeEmployee(employee).subscribe({
       next: _ => this.loadEmployees()
     })
   }
 
-  deactiveEmployee(employeeId: number){
-    this.employeeService.deactiveEmployee(employeeId).subscribe({
+  deactiveEmployee(employee: Employee){
+    this.employeeService.deactiveEmployee(employee).subscribe({
       next: _ => this.loadEmployees()
     })
   }

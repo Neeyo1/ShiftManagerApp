@@ -12,7 +12,7 @@ namespace API.Controllers;
 
 [Authorize]
 public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper, 
-    UserManager<AppUser> userManager) : BaseApiController
+    UserManager<AppUser> userManager, INotificationService notificationService) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<DepartmentDto>>> GetDepartments(
@@ -52,7 +52,8 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
         var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
-        CreateNotifications(department.Managers, $"Department {department.Name} has been edited",
+        notificationService.CreateNotifications(department.Managers, 
+            $"Department {department.Name} has been edited",
             $"Department {department.Name} has been renamed into {departmentEditDto.Name}");
 
         mapper.Map(departmentEditDto, department);
@@ -68,7 +69,8 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
         var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
-        CreateNotifications(department.Managers, $"Department {department.Name} has been deleted",
+        notificationService.CreateNotifications(department.Managers,
+            $"Department {department.Name} has been deleted",
             $"Department {department.Name} has been deleted, for more information contact system administrator");
         
         unitOfWork.DepartmentRepository.DeleteDepartment(department);
@@ -91,7 +93,8 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
         
         department.Managers.Add(manager);
 
-        CreateNotifications(department.Managers, $"Department {department.Name} got new manager",
+        notificationService.CreateNotifications(department.Managers,
+            $"Department {department.Name} got new manager",
             $"Department {department.Name} got new manager - {manager.FirstName} {manager.LastName}");
 
         if (await unitOfWork.Complete())
@@ -115,7 +118,8 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
         if (manager.DepartmentId != department.Id)
             return BadRequest("This person is not manager of this department");
         
-        CreateNotifications(department.Managers, $"Department {department.Name} lost manager",
+        notificationService.CreateNotifications(department.Managers,
+            $"Department {department.Name} lost manager",
             $"Department {department.Name} lost manager - {manager.FirstName} {manager.LastName}");
 
         department.Managers.Remove(manager);
@@ -127,20 +131,5 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
             return NoContent();
         }
         return BadRequest("Failed to remove manager");
-    }
-
-    private void CreateNotifications(IEnumerable<AppUser> users, string title, string content)
-    {
-        foreach (var user in users)
-        {
-            var notification = new Notification
-            {
-                Title = title,
-                Content = content,
-                UserId = user.Id
-            };
-
-            unitOfWork.NotificationRepository.AddNotification(notification);
-        }
     }
 }

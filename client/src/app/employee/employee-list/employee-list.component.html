@@ -39,17 +39,17 @@
                         Edit
                       </button>
                       <button class="btn btn-danger" 
-                              (click)="deleteEmployee(employee.id)">
+                              (click)="deleteEmployee(employee)">
                         Delete
                       </button>
                       @if (employee.isActive) {
                         <button class="btn btn-info" 
-                                (click)="deactiveEmployee(employee.id)">
+                                (click)="deactiveEmployee(employee)">
                             Deactive
                         </button>
                       } @else {
                         <button class="btn btn-info" 
-                                (click)="activeEmployee(employee.id)">
+                                (click)="activeEmployee(employee)">
                             Active
                         </button>
                       }

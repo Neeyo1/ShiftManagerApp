@@ -140,7 +140,7 @@ export class ModalService {
       next: () => {
         if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
           let employeeForm = this.bsModalRef.content.employeeForm;
-          this.employeeService.editEmployee(employee.id, employeeForm.value).subscribe({
+          this.employeeService.editEmployee(employee, employeeForm.value).subscribe({
             next: _ => this.employeeService.getEmployees()
           })
         }

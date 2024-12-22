@@ -28,6 +28,10 @@ Admins can:
 
 https://shiftmanager.pl/
 
-Login: demo01
-Password: Demo1!@#
+- Demo manager
+    - Login: demo01
+    - Password: Demo1!@#
+- Demo admin
+    - Login: demoadmin
+    - Password: zaq1@WSX
 

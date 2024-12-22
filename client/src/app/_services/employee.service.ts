@@ -6,6 +6,7 @@ import { Employee } from '../_models/employee';
 import { EmployeeParams } from '../_models/employeeParams';
 import { of, tap } from 'rxjs';
 import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class EmployeeService {
   employeeCache = new Map();
   paginatedResult = signal<PaginatedResult<Employee[]> | null>(null);
   employeeParams = signal<EmployeeParams>(new EmployeeParams);
+  private notificationService = inject(NotificationService);
 
   resetEmployeeParams(){
     this.employeeParams.set(new EmployeeParams);
@@ -60,38 +62,46 @@ export class EmployeeService {
     return this.http.post<Employee>(this.baseUrl + "employees", model).pipe(
       tap(() => {
         this.employeeCache.clear();
+        const departmentId: number = +model.departmentId;
+        this.notificationService.createNotification("managers", departmentId);
       })
     );
   }
 
-  editEmployee(employeeId: number, model: any){
-    return this.http.put<Employee>(this.baseUrl + `employees/${employeeId}`, model).pipe(
+  editEmployee(employee: Employee, model: any){
+    return this.http.put<Employee>(this.baseUrl + `employees/${employee.id}`, model).pipe(
       tap(() => {
         this.employeeCache.clear();
+        const departmentId: number = +model.departmentId;
+        this.notificationService.createNotification("managers", employee.departmentId);
+        this.notificationService.createNotification("managers", departmentId);
       })
     );
   }
 
-  deleteEmployee(employeeId: number){
-    return this.http.delete(this.baseUrl + `employees/${employeeId}`).pipe(
+  deleteEmployee(employee: Employee){
+    return this.http.delete(this.baseUrl + `employees/${employee.id}`).pipe(
       tap(() => {
         this.employeeCache.clear();
+        this.notificationService.createNotification("managers", employee.departmentId);
       })
     );
   }
 
-  activeEmployee(employeeId: number){
-    return this.http.post(this.baseUrl + `employees/${employeeId}/active`, {}).pipe(
+  activeEmployee(employee: Employee){
+    return this.http.post(this.baseUrl + `employees/${employee.id}/active`, {}).pipe(
       tap(() => {
         this.employeeCache.clear();
+        this.notificationService.createNotification("managers", employee.departmentId);
       })
     );
   }
 
-  deactiveEmployee(employeeId: number){
-    return this.http.post(this.baseUrl + `employees/${employeeId}/deactive`, {}).pipe(
+  deactiveEmployee(employee: Employee){
+    return this.http.post(this.baseUrl + `employees/${employee.id}/deactive`, {}).pipe(
       tap(() => {
         this.employeeCache.clear();
+        this.notificationService.createNotification("managers", employee.departmentId);
       })
     );
   }
