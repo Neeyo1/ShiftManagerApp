@@ -1,11 +1,12 @@
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR;
 
-public class NotificationHub(IUnitOfWork unitOfWork) : Hub
+public class NotificationHub(IUnitOfWork unitOfWork, UserManager<AppUser> userManager) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -16,11 +17,27 @@ public class NotificationHub(IUnitOfWork unitOfWork) : Hub
         if (user == null)
             throw new HubException("Cannot find user");
 
-        if (user.DepartmentId == null)
-            throw new HubException("Cannot find department to join");
-
-        var groupName = $"group-department-{user.DepartmentId}";
-        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        var roles = await userManager.GetRolesAsync(user);
+        if (roles.Contains("Admin"))
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, "admins");
+        }
+        else if (roles.Contains("User"))
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, "users");
+        }
+        else if (roles.Contains("Manager"))
+        {
+            if (user.DepartmentId == null)
+                throw new HubException("Cannot find department to join");
+            
+            var groupName = $"group-department-{user.DepartmentId}";
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        }
+        else
+        {
+            throw new HubException("Failed to join any group");
+        }
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -28,27 +45,28 @@ public class NotificationHub(IUnitOfWork unitOfWork) : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendNotification(int departmentId)
+    public async Task SendNotification(string group, int? departmentId)
     {
-        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
-        if (department == null) throw new HubException("Cannot find department");
-
-        foreach (var manager in department.Managers)
+        switch (group)
         {
-            var notification = new Notification
-            {
-                Title = $"Department '{department.Name}' info",
-                Content = $"Something important happened in '{department.Name}' department",
-                UserId = manager.Id
-            };
+            case "admins":
+                await Clients.Group("admins").SendAsync("NewNotification");
+                break;
+            case "users":
+                await Clients.Group("users").SendAsync("NewNotification");
+                break;
+            case "managers":
+                if (departmentId != null)
+                {
+                    var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync((int)departmentId);
+                    if (department == null) throw new HubException("Cannot find department");
 
-            unitOfWork.NotificationRepository.AddNotification(notification);
-        }
-
-        if (await unitOfWork.Complete())
-        {
-            var groupName = $"group-department-{department.Id}";
-            await Clients.Group(groupName).SendAsync("NewNotification");
+                    var groupName = $"group-department-{department.Id}";
+                    await Clients.Group(groupName).SendAsync("NewNotification");
+                }
+                break;
+            default:
+                throw new HubException("Failed to send notification");
         }
     }
 }

@@ -120,6 +120,16 @@ try
     await userManager.CreateAsync(adminUser, "zaq1@WSX");
 
     await userManager.AddToRoleAsync(adminUser, "Admin");
+
+    var demoUser = new AppUser
+    {
+        UserName = "demoadmin",
+        FirstName = "",
+        LastName = ""
+    };
+    await userManager.CreateAsync(demoUser, "zaq1@WSX");
+
+    await userManager.AddToRoleAsync(demoUser, "Admin");
 }
 catch (Exception ex)
 {

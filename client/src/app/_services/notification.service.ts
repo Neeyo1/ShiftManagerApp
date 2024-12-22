@@ -98,15 +98,15 @@ export class NotificationService {
     )
   }
 
-  // createNotification(){
-  //   return this.http.post(this.baseUrl + "notifications", {}).pipe(
-  //     tap(() => {
-  //       this.notificationCache.clear();
-  //     })
-  //   );
-  // }
+  createNotificationToAdmin(message: string){
+    return this.http.post(this.baseUrl + "notifications", {message}).pipe(
+      tap(() => {
+        this.createNotification("admins");
+      })
+    );
+  }
 
-  async createNotification(departmentId: number) {
-    return this.hubConnection?.invoke('SendNotification', departmentId)
+  async createNotification(group: string, departmentId?: number) {
+    return this.hubConnection?.invoke('SendNotification', group, departmentId)
   }
 }

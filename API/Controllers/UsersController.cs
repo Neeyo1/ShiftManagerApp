@@ -67,6 +67,11 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper,
     [HttpPut("{userId}")]
     public async Task<ActionResult> EditUserPassword(int userId, AdminEditPasswordDto adminEditPasswordDto)
     {
+        var currentUser = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
+        if (currentUser == null || currentUser.UserName == null)
+            return BadRequest("Could not find current user");
+        if (currentUser.UserName == "demoadmin") return BadRequest("You cannot do that as demo admin");
+
         var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
         if (user == null) return BadRequest("Failed to find user");
 

@@ -6,6 +6,7 @@ import { Department } from '../_models/department';
 import { DepartmentParams } from '../_models/departmentParams';
 import { of, tap } from 'rxjs';
 import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class DepartmentService {
   paginatedResult = signal<PaginatedResult<Department[]> | null>(null);
   departmentParams = signal<DepartmentParams>(new DepartmentParams);
   myDepartment = signal<Department | null>(null);
+  private notificationService = inject(NotificationService);
 
   resetDepartmentParams(){
     this.departmentParams.set(new DepartmentParams);
@@ -64,6 +66,7 @@ export class DepartmentService {
     return this.http.put<Department>(this.baseUrl + `departments/${departmentId}`, model).pipe(
       tap(() => {
         this.departmentCache.clear();
+        this.notificationService.createNotification("managers", departmentId);
       })
     );
   }
@@ -72,6 +75,7 @@ export class DepartmentService {
     return this.http.delete(this.baseUrl + `departments/${departmentId}`).pipe(
       tap(() => {
         this.departmentCache.clear();
+        this.notificationService.createNotification("managers", departmentId);
       })
     );
   }
@@ -80,6 +84,7 @@ export class DepartmentService {
     return this.http.post(this.baseUrl + `departments/${departmentId}/add-manager/${managerId}`, {}).pipe(
       tap(() => {
         this.departmentCache.clear();
+        this.notificationService.createNotification("managers", departmentId);
       })
     );
   }
@@ -88,6 +93,7 @@ export class DepartmentService {
     return this.http.post(this.baseUrl + `departments/${departmentId}/remove-manager/${managerId}`, {}).pipe(
       tap(() => {
         this.departmentCache.clear();
+        this.notificationService.createNotification("managers", departmentId);
       })
     );
   }

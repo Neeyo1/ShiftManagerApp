@@ -5,12 +5,14 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Authorize]
-public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
+public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper,
+    UserManager<AppUser> userManager) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<NotificationDto>>> GetNotifications(
@@ -57,22 +59,27 @@ public class NotificationsController(IUnitOfWork unitOfWork, IMapper mapper) : B
     }
 
     [HttpPost]
-    public async Task<ActionResult<NotificationDto>> CreateDummyNotification()
+    public async Task<ActionResult<NotificationDto>> CreateNotificationToAdmin(
+        [FromBody] NotificationCreateDto notificationCreateDto)
     {
         var user = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (user == null) return BadRequest("Failed to find user");
 
-        var notification = new Notification
+        var admins = await userManager.GetUsersInRoleAsync("Admin");
+        foreach (var admin in admins)
         {
-            Title = "Dummy notification",
-            Content = "this is dummy's notofication content, if you can read it, notification has been marked as read",
-            UserId = user.Id
-        };
+            var notification = new Notification
+            {
+                Title = $"Message from {user.FirstName} {user.LastName}",
+                Content = notificationCreateDto.Message,
+                UserId = admin.Id
+            };
 
-        unitOfWork.NotificationRepository.AddNotification(notification);
+            unitOfWork.NotificationRepository.AddNotification(notification);
+        }
 
         if (await unitOfWork.Complete())
             return NoContent();
-        return BadRequest("Failed to read notification");
+        return BadRequest("Failed to send notification");
     }
 }

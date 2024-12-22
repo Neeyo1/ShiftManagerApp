@@ -37,6 +37,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     {
         var user = await userManager.FindByNameAsync(User.GetUsername());
         if (user == null || user.UserName == null) return BadRequest("Could not find user");
+        if (user.UserName == "demoadmin") return BadRequest("You cannot do that as demo admin");
 
         var result = await userManager.ChangePasswordAsync(user, userEditPasswordDto.CurrentPassword, 
             userEditPasswordDto.NewPassword);

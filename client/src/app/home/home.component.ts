@@ -22,7 +22,7 @@ export class HomeComponent{
     this.myModalService.openCreateWorkShiftModal();
   }
   
-  sendNotification(departmentId: number) {
-    this.notificationService.createNotification(departmentId);
+  sendNotification() {
+    this.notificationService.createNotificationToAdmin("Test message").subscribe();
   }
 }

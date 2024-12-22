@@ -49,8 +49,11 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
     [HttpPut("{departmentId}")]
     public async Task<ActionResult<DepartmentDto>> EditDepartment(DepartmentCreateDto departmentEditDto, int departmentId)
     {
-        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
+
+        CreateNotifications(department.Managers, $"Department {department.Name} has been edited",
+            $"Department {department.Name} has been renamed into {departmentEditDto.Name}");
 
         mapper.Map(departmentEditDto, department);
 
@@ -62,8 +65,11 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
     [HttpDelete("{departmentId}")]
     public async Task<ActionResult> DeleteDepartment(int departmentId)
     {
-        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
+
+        CreateNotifications(department.Managers, $"Department {department.Name} has been deleted",
+            $"Department {department.Name} has been deleted, for more information contact system administrator");
         
         unitOfWork.DepartmentRepository.DeleteDepartment(department);
 
@@ -75,7 +81,7 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
     [HttpPost("{departmentId}/add-manager/{managerId}")]
     public async Task<ActionResult> AddManager(int departmentId, int managerId)
     {
-        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
         var manager = await unitOfWork.UserRepository.GetUserDetailedByIdAsync(managerId);
@@ -84,6 +90,9 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
             return BadRequest($"This person is already manager of '{manager.Department!.Name}' department");
         
         department.Managers.Add(manager);
+
+        CreateNotifications(department.Managers, $"Department {department.Name} got new manager",
+            $"Department {department.Name} got new manager - {manager.FirstName} {manager.LastName}");
 
         if (await unitOfWork.Complete())
         {
@@ -98,7 +107,7 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
     [HttpPost("{departmentId}/remove-manager/{managerId}")]
     public async Task<ActionResult> RemoveManager(int departmentId, int managerId)
     {
-        var department = await unitOfWork.DepartmentRepository.GetDepartmentByIdAsync(departmentId);
+        var department = await unitOfWork.DepartmentRepository.GetDepartmentDetailedByIdAsync(departmentId);
         if (department == null) return BadRequest("Failed to find department");
 
         var manager = await unitOfWork.UserRepository.GetUserByIdAsync(managerId);
@@ -106,6 +115,9 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
         if (manager.DepartmentId != department.Id)
             return BadRequest("This person is not manager of this department");
         
+        CreateNotifications(department.Managers, $"Department {department.Name} lost manager",
+            $"Department {department.Name} lost manager - {manager.FirstName} {manager.LastName}");
+
         department.Managers.Remove(manager);
 
         if (await unitOfWork.Complete())
@@ -115,5 +127,20 @@ public class DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper,
             return NoContent();
         }
         return BadRequest("Failed to remove manager");
+    }
+
+    private void CreateNotifications(IEnumerable<AppUser> users, string title, string content)
+    {
+        foreach (var user in users)
+        {
+            var notification = new Notification
+            {
+                Title = title,
+                Content = content,
+                UserId = user.Id
+            };
+
+            unitOfWork.NotificationRepository.AddNotification(notification);
+        }
     }
 }

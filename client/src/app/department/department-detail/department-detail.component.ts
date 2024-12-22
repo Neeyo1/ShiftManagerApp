@@ -9,7 +9,6 @@ import { EmployeeService } from '../../_services/employee.service';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
-import { NotificationService } from '../../_services/notification.service';
 
 @Component({
   selector: 'app-department-detail',
@@ -26,7 +25,6 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   department = signal<Department | null>(null);
   private previousEmployeeParams: EmployeeParams | null = null;
-  private notificationService = inject(NotificationService);
 
   ngOnInit(): void {
     this.loadDepartment();
@@ -64,9 +62,5 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
       this.employeeService.getEmployees()
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }
-
-  sendNotification() {
-    this.notificationService.createNotification(this.department()!.id);
   }
 }

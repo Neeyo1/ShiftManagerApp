@@ -70,9 +70,7 @@ export class AccountService {
         next: department => this.departmentService.myDepartment.set(department)
       });
     }
-    if (this.roles().includes("Manager")){
-      this.notificationService.createHubConnection(user)
-    }
+    this.notificationService.createHubConnection(user)
   }
 
   changePassword(model: any){
