@@ -66,7 +66,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         var refreshToken = HttpContext.GetRefreshToken();
         if (refreshToken == null) return BadRequest("No refresh token was provided");
 
-        var storedRefreshToken = await tokenService.GetRefreshToken(username, refreshToken);
+        var storedRefreshToken = await unitOfWork.TokenRepository.GetRefreshToken(username, refreshToken);
         if (storedRefreshToken == null) return BadRequest("Invalid refresh token");
 
         if (storedRefreshToken.ExpiryDate < DateTime.UtcNow) 
@@ -77,7 +77,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         var user = await userManager.FindByNameAsync(username);
         if (user == null || user.UserName == null) return BadRequest("Could not find user");
 
-        tokenService.RemoveRefreshToken(storedRefreshToken);
+        unitOfWork.TokenRepository.RemoveRefreshToken(storedRefreshToken);
         if (await unitOfWork.Complete())
         {
             var userToReturn = mapper.Map<UserDto>(user);

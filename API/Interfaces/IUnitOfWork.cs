@@ -9,6 +9,7 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
     IWorkRecordRepository WorkRecordRepository { get; }
     IWorkShiftRepository WorkShiftRepository { get; }
+    ITokenRepository TokenRepository { get; }
     Task<bool> Complete();
     bool HasChanges();
 }

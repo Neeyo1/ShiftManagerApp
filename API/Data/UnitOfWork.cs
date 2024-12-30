@@ -5,7 +5,8 @@ namespace API.Data;
 public class UnitOfWork(DataContext context, IDepartmentRepository departmentRepository,
     IEmployeeRepository employeeRepository, INotificationRepository notificationRepository,
     ISummaryRepository summaryRepository, IUserRepository userRepository,
-    IWorkRecordRepository workRecordRepository, IWorkShiftRepository workShiftRepository) : IUnitOfWork
+    IWorkRecordRepository workRecordRepository, IWorkShiftRepository workShiftRepository,
+    ITokenRepository tokenRepository) : IUnitOfWork
 {
     public IDepartmentRepository DepartmentRepository => departmentRepository;
 
@@ -20,6 +21,7 @@ public class UnitOfWork(DataContext context, IDepartmentRepository departmentRep
     public IWorkRecordRepository WorkRecordRepository => workRecordRepository;
 
     public IWorkShiftRepository WorkShiftRepository => workShiftRepository;
+    public ITokenRepository TokenRepository => tokenRepository;
 
     public async Task<bool> Complete()
     {

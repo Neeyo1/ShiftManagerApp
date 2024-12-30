@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace API.Services;
 
 public class TokenService(IConfiguration config, UserManager<AppUser> userManager,
-    DataContext context) : ITokenService
+    IUnitOfWork unitOfWork) : ITokenService
 {
     public async Task<string> CreateToken(AppUser user)
     {
@@ -55,9 +55,9 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
             ExpiryDate = DateTime.UtcNow.AddDays(7)
         };
 
-        AddRefreshToken(refreshToken);
+        unitOfWork.TokenRepository.AddRefreshToken(refreshToken);
 
-        if (await Complete()) return refreshToken;
+        if (await unitOfWork.Complete()) return refreshToken;
         throw new Exception("Cannot generate refresh token");
     }
 
@@ -95,26 +95,5 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
         {
             return null;
         }
-    }
-
-    public void AddRefreshToken(RefreshToken refreshToken)
-    {
-        context.RefreshTokens.Add(refreshToken);
-    }
-
-    public void RemoveRefreshToken(RefreshToken refreshToken)
-    {
-        context.RefreshTokens.Remove(refreshToken);
-    }
-
-    public async Task<RefreshToken?> GetRefreshToken(string username, string token)
-    {
-        return await context.RefreshTokens
-            .FirstOrDefaultAsync(x => x.Username == username && x.Token == token);
-    }
-
-    public async Task<bool> Complete()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 }
