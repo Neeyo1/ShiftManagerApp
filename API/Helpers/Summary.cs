@@ -5,9 +5,7 @@ namespace API.Helpers;
 public class Summary
 {
     public Employee Employee { get; set; } = null!;
-    public DateOnly Date { get; set; }
-    public double WorkShiftMinutes { get; set; }
-    public double WorkRecordMinutes { get; set; }
-    public WorkShift? WorkShift { get; set; }
-    public IEnumerable<WorkRecord> WorkRecords { get; set; } = [];
+    public double TotalWorkShiftMinutes { get; set; }
+    public double TotalWorkRecordMinutes { get; set; }
+    public IEnumerable<SummaryWorkDetail> SummaryWorkDetails { get; set; } = [];
 }

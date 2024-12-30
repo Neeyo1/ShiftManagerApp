@@ -22,7 +22,14 @@ public class AutoMapperProfiles : Profile
         CreateMap<WorkShiftEditDto, WorkShift>();
         CreateMap<WorkRecord, WorkRecordDto>();
         CreateMap<WorkRecordEditDto, WorkRecord>();
-        CreateMap<Summary, SummaryDto>();
+        CreateMap<SummaryWorkDetail, SummaryWorkDetailDto>();
+        CreateMap<Summary, SummaryDto>()
+            .ForMember(x => x.Employee, y => y.MapFrom(z => z.SummaryWorkDetails.Any()
+            ? z.SummaryWorkDetails.First().Employee : null))
+            .ForMember(x => x.TotalWorkRecordMinutes, y => y.MapFrom(z => z.SummaryWorkDetails
+                .Select(s => s.WorkRecordMinutes).Sum()))
+            .ForMember(x => x.TotalWorkShiftMinutes, y => y.MapFrom(z => z.SummaryWorkDetails
+                .Select(s => s.WorkShiftMinutes).Sum()));
         CreateMap<Notification, NotificationDto>();
         CreateMap<Notification, NotificationDetailedDto>();
         CreateMap<AppUser, MemberDto>()
