@@ -13,6 +13,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { SummaryService } from '../../_services/summary.service';
+import { Summary } from '../../_models/summary';
 
 @Component({
   selector: 'app-employee-detail',
@@ -31,7 +33,11 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy{
   departmentService = inject(DepartmentService);
   workShiftService = inject(WorkShiftService);
   workRecordService = inject(WorkRecordService);
+  summaryService = inject(SummaryService);
   department = signal<Department | null>(null);
+  summary = signal<Summary | null>(null);
+  month: number | null = null;
+  year: number | null = null;
   private previousWorkShiftParams: WorkShiftParams | null = null;
   private previousWorkRecordParams: WorkRecordParams | null = null;
 
@@ -84,6 +90,13 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy{
       this.workRecordService.workRecordParams.set(newParams)
     }
     this.workRecordService.getWorkRecords();
+  }
+
+  loadSummary(){
+    if (!this.employee() || !this.month || !this.year) return;
+    this.summaryService.getSummary(this.employee()!.id, this.year, this.month).subscribe({
+      next: summary => this.summary.set(summary)
+    });
   }
 
   pageChangedWorkShift(event: any){

@@ -109,5 +109,64 @@
             </div>
             }
         </tab>
+        <tab heading="Summary">
+            <div class="d-flex mt-2">
+                <form #form="ngForm" class="mx-auto" (ngSubmit)="loadSummary()" autocomplete="off">
+                    <div class="mb-3 form-floating">
+                        <input type="number" 
+                               class="form-control" 
+                               name="year" 
+                               placeholder="Year"
+                               [(ngModel)]="year">
+                        <label>Year</label>
+                    </div>
+
+                    <div class="mb-3 form-floating">
+                        <input type="number" 
+                               class="form-control" 
+                               name="month" 
+                               placeholder="Month"
+                               [(ngModel)]="month">
+                        <label>Month</label>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button class="btn btn-primary" type="submit">
+                            Get summary
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            @if (summary()) {
+                <p>Total work shift minutes: {{summary()?.totalWorkShiftMinutes}}</p>
+                <p>Total work record minutes: {{summary()?.totalWorkRecordMinutes}}</p>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Work shift minutes</th>
+                            <th scope="col">Work record minutes</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (workDetail of summary()?.summaryWorkDetails; track $index) {
+                        <tr>
+                            <td>{{workDetail.date | date:'d/MM/yyyy'}}</td>
+                            <td>{{workDetail.workShiftMinutes}}</td>
+                            <td>{{workDetail.workRecordMinutes}}</td>
+                            <td>
+                                <button class="btn btn-primary" routerLink="/workshifts/{{workDetail.workShift?.id}}">
+                                    Work shift details
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </tab>
     </tabset>
 </div>
