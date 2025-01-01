@@ -13,39 +13,33 @@
         <div class="d-flex align-items-center justify-content-center">
             <div class="col-8">
                 <form [formGroup]="workRecordForm" id="workRecordForm" (ngSubmit)="complete()" autocomplete="off">
-                    <app-date-picker
-                        [formControl]="$any(workRecordForm.controls['startDate'])"
+                    <app-date-picker 
+                        [formControl]="$any(workRecordForm.controls['startDate'])" 
                         [label]="'Start date'">
                     </app-date-picker>
+                    
+                    <div class="mb-3">
+                        <label>Start time</label>
+                        <timepicker 
+                            [formControl]="$any(workRecordForm.controls['startTime'])" 
+                            [showMeridian]="false" 
+                            ngDefaultControl>
+                        </timepicker>
+                    </div>
 
-                    <app-text-input 
-                        [formControl]="$any(workRecordForm.controls['startHour'])"
-                        [label]="'Start hour'"
-                        [type]="'number'">
-                    </app-text-input>
-
-                    <app-text-input 
-                        [formControl]="$any(workRecordForm.controls['startMinute'])"
-                        [label]="'Start minute'"
-                        [type]="'number'">
-                    </app-text-input>
-
-                    <app-date-picker
-                        [formControl]="$any(workRecordForm.controls['endDate'])"
+                    <app-date-picker 
+                        [formControl]="$any(workRecordForm.controls['endDate'])" 
                         [label]="'End date'">
                     </app-date-picker>
-
-                    <app-text-input 
-                        [formControl]="$any(workRecordForm.controls['endHour'])"
-                        [label]="'End hour'"
-                        [type]="'number'">
-                    </app-text-input>
-
-                    <app-text-input 
-                        [formControl]="$any(workRecordForm.controls['endMinute'])"
-                        [label]="'End minute'"
-                        [type]="'number'">
-                    </app-text-input>
+                    
+                    <div class="mb-3">
+                        <label>End time</label>
+                        <timepicker 
+                            [formControl]="$any(workRecordForm.controls['endTime'])" 
+                            [showMeridian]="false" 
+                            ngDefaultControl>
+                        </timepicker>
+                    </div>
 
                     @if (validationErrors) {
                     <div class="alert alert-danger text-start">

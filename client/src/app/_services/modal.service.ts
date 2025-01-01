@@ -211,12 +211,18 @@ export class ModalService {
       next: () => {
         if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
           let workRecordForm = this.bsModalRef.content.workRecordForm;
-          let start = new Date(workRecordForm.value['startDate']);
-          start.setHours(workRecordForm.value['startHour'], workRecordForm.value['startMinute'], 0);
-          workRecordForm.value['start'] = start.toISOString();
-          let end = new Date(workRecordForm.value['endDate']);
-          end.setHours(workRecordForm.value['endHour'], workRecordForm.value['endMinute'], 0);
-          workRecordForm.value['end'] = end.toISOString();
+
+          let startDate = new Date(workRecordForm.value['startDate']);
+          let startTime = workRecordForm.value['startTime'].toString().slice(16,21);
+          startDate.setHours(Number(startTime.slice(0,2)), Number(startTime.slice(3,5)), 0);
+
+          let endDate = new Date(workRecordForm.value['endDate']);
+          let endTime = workRecordForm.value['endTime'].toString().slice(16,21);
+          endDate.setHours(Number(endTime.slice(0,2)), Number(endTime.slice(3,5)), 0);
+
+          workRecordForm.value['start'] = startDate.toISOString();
+          workRecordForm.value['end'] = endDate.toISOString();
+
           this.workRecordService.editWorkRecord(workRecord.id, workRecordForm.value).subscribe({
             next: _ => this.workRecordService.getWorkRecords()
           })
