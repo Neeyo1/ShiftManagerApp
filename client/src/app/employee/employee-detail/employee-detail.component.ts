@@ -15,11 +15,12 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { SummaryService } from '../../_services/summary.service';
 import { Summary } from '../../_models/summary';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @Component({
   selector: 'app-employee-detail',
   standalone: true,
-  imports: [TabsModule, PaginationModule, FormsModule, RouterLink, DatePipe],
+  imports: [TabsModule, PaginationModule, FormsModule, RouterLink, DatePipe, BsDatepickerModule],
   templateUrl: './employee-detail.component.html',
   styleUrl: './employee-detail.component.css'
 })
@@ -36,8 +37,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy{
   summaryService = inject(SummaryService);
   department = signal<Department | null>(null);
   summary = signal<Summary | null>(null);
-  month: number | null = null;
-  year: number | null = null;
+  date: Date = new Date;
   private previousWorkShiftParams: WorkShiftParams | null = null;
   private previousWorkRecordParams: WorkRecordParams | null = null;
 
@@ -93,8 +93,10 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy{
   }
 
   loadSummary(){
-    if (!this.employee() || !this.month || !this.year) return;
-    this.summaryService.getSummary(this.employee()!.id, this.year, this.month).subscribe({
+    if (!this.employee() || !this.date) return;
+    const year = this.date.getFullYear();
+    const month = this.date.getMonth() + 1;
+    this.summaryService.getSummary(this.employee()!.id, year, month).subscribe({
       next: summary => this.summary.set(summary)
     });
   }

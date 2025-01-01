@@ -112,25 +112,22 @@
         <tab heading="Summary">
             <div class="d-flex mt-2">
                 <form #form="ngForm" class="mx-auto" (ngSubmit)="loadSummary()" autocomplete="off">
-                    <div class="mb-3 form-floating">
-                        <input type="number" 
-                               class="form-control" 
-                               name="year" 
-                               placeholder="Year"
-                               [(ngModel)]="year">
-                        <label>Year</label>
-                    </div>
-
-                    <div class="mb-3 form-floating">
-                        <input type="number" 
-                               class="form-control" 
-                               name="month" 
-                               placeholder="Month"
-                               [(ngModel)]="month">
-                        <label>Month</label>
-                    </div>
-
                     <div class="form-group text-center">
+                        <input type="text" 
+                               name="date"
+                               class="form-control" 
+                               placeholder="Date" 
+                               [bsConfig]="{
+                                    minMode: 'month',
+                                    containerClass: 'theme-dark-blue',
+                                    dateInputFormat: 'MM/YYYY'
+                               }" 
+                               [(ngModel)]="date"
+                               bsDatepicker
+                        >
+                    </div>
+
+                    <div class="form-group text-center mt-2">
                         <button class="btn btn-primary" type="submit">
                             Get summary
                         </button>
