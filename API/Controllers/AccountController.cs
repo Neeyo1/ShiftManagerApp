@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService,
-    IMapper mapper, IUnitOfWork unitOfWork) : BaseApiController
+    IMapper mapper, IUnitOfWork unitOfWork, IMailService mailService) : BaseApiController
 {
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
@@ -89,5 +89,13 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
             return userToReturn;
         }
         return BadRequest("Failed to refresh token");
+    }
+
+    [Authorize]
+    [HttpPost("test-mail")]
+    public async Task<ActionResult> TestMail(SendMailDto sendMailDto)
+    {
+        await mailService.SendMailAsync(sendMailDto.ToMail, sendMailDto.Subject, sendMailDto.Body);
+        return Ok("Email sent successfully!");
     }
 }
