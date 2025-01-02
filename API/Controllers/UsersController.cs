@@ -65,7 +65,7 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper,
 
     [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("{userId}")]
-    public async Task<ActionResult> EditUserPassword(int userId, AdminEditPasswordDto adminEditPasswordDto)
+    public async Task<ActionResult> EditUserPassword(int userId, ResetPasswordDto resetPasswordDto)
     {
         var currentUser = await unitOfWork.UserRepository.GetUserByIdAsync(User.GetUserId());
         if (currentUser == null || currentUser.UserName == null)
@@ -76,7 +76,7 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper,
         if (user == null) return BadRequest("Failed to find user");
 
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
-        var passwordChangeResult = await userManager.ResetPasswordAsync(user, resetToken, adminEditPasswordDto.NewPassword);
+        var passwordChangeResult = await userManager.ResetPasswordAsync(user, resetToken, resetPasswordDto.NewPassword);
 
         if (!passwordChangeResult.Succeeded) return BadRequest(passwordChangeResult.Errors);
         return NoContent();

@@ -91,6 +91,38 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         return BadRequest("Failed to refresh token");
     }
 
+    [HttpPost("forgot-password")]
+    public async Task<ActionResult<UserDto>> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+    {
+        var user = await userManager.FindByEmailAsync(forgotPasswordDto.Mail);
+        if (user == null || user.UserName == null || user.Email == null)
+            return BadRequest("User with this email does not exist");
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        if (token == null) return BadRequest("Failed to generate reset password token");
+
+        await mailService.SendMailAsync(user.Email, "Reset password",
+            $"Your password reset link: https://shiftmanager.pl/reset-password?email={user.Email}&token={token}");
+        return Ok("Email sent successfully!");
+    }
+
+    [HttpPut("reset-password")]
+    public async Task<ActionResult<UserDto>> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        if (resetPasswordDto.Email == null)
+            return BadRequest("No email provided");
+        if (resetPasswordDto.Token == null)
+            return BadRequest("No token provided");
+
+        var user = await userManager.FindByEmailAsync(resetPasswordDto.Email);
+        if (user == null || user.UserName == null || user.Email == null)
+            return BadRequest("User with this email does not exist");
+
+        var result = await userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
+        if (result.Succeeded) return Ok("Password changed successfully");
+        return BadRequest(result.Errors);
+    }
+
     [Authorize]
     [HttpPost("test-mail")]
     public async Task<ActionResult> TestMail(SendMailDto sendMailDto)
