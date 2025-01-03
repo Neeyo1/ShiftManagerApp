@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, 
-    UserManager<AppUser> userManager, ITokenService tokenService) : BaseApiController
+public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager,
+    ITokenService tokenService, IMailService mailService) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] MemberParams memberParams)
@@ -55,12 +55,22 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper,
         if (!emailValidation.IsValid(registerDto.Email))
             return BadRequest($"Email {registerDto.Email} is not valid");
 
+        var userWithEmail = await userManager.FindByEmailAsync(registerDto.Email);
+        if (userWithEmail != null)
+            return BadRequest("User with this email already exists");
+
         var user = mapper.Map<AppUser>(registerDto);
         user.UserName = registerDto.Username.ToLower();
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
         await userManager.AddToRoleAsync(user, "User");
+
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        if (token == null) return BadRequest("Failed to generate reset password token");
+
+        await mailService.SendMailAsync(user.Email!, "Account confirmation",
+            $"New account has been created using your email, to confirm your identity please click this link: https://shiftmanager.pl/account-confirm?email={user.Email}&token={token}");
 
         var userToReturn = mapper.Map<UserDto>(user);
         userToReturn.Token = await tokenService.CreateToken(user);

@@ -98,6 +98,9 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         if (user == null || user.UserName == null || user.Email == null)
             return BadRequest("User with this email does not exist");
 
+        if (user.EmailConfirmed == false)
+            return BadRequest("This user's email was not confirmed");
+
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
         if (token == null) return BadRequest("Failed to generate reset password token");
 
@@ -120,6 +123,18 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
 
         var result = await userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
         if (result.Succeeded) return Ok("Password changed successfully");
+        return BadRequest(result.Errors);
+    }
+
+    [HttpPost("confirm-account")]
+    public async Task<ActionResult<UserDto>> ConfirmAccount(MailConfirm mailConfirm)
+    {
+        var user = await userManager.FindByEmailAsync(mailConfirm.Email);
+        if (user == null || user.UserName == null || user.Email == null)
+            return BadRequest("User with this email does not exist");
+
+        var result = await userManager.ConfirmEmailAsync(user, mailConfirm.Token);
+        if (result.Succeeded) return Ok("Email confirmed successfully");
         return BadRequest(result.Errors);
     }
 
