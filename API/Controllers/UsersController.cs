@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
@@ -49,6 +50,10 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper,
     {
         if (await userManager.Users.AnyAsync(x => x.NormalizedUserName == registerDto.Username.ToUpper()))
             return BadRequest("Username is taken");
+        
+        var emailValidation = new EmailAddressAttribute();
+        if (!emailValidation.IsValid(registerDto.Email))
+            return BadRequest($"Email {registerDto.Email} is not valid");
 
         var user = mapper.Map<AppUser>(registerDto);
         user.UserName = registerDto.Username.ToLower();

@@ -28,16 +28,27 @@ export class MemberModalComponent implements OnInit{
       lastName: ['', [Validators.required, Validators.maxLength(48)]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(24),
         this.hasNumber(), this.hasLowerCase(), this.hasUpperCase()]],
-      confirmPassword: ['', [Validators.required, this.matchValues('password')]],
+      confirmPassword: ['', [Validators.required, this.matchPasswordValues('password')]],
+      email: ['', [Validators.required, Validators.maxLength(100), Validators.email]],
+      confirmEmail: ['', [Validators.required, this.matchEmailValues('email')]],
     })
     this.memberForm.controls['password'].valueChanges.subscribe({
       next: () => this.memberForm.controls['confirmPassword'].updateValueAndValidity()
     })
+    this.memberForm.controls['email'].valueChanges.subscribe({
+      next: () => this.memberForm.controls['confirmEmail'].updateValueAndValidity()
+    })
   }
 
-  matchValues(matchTo: string): ValidatorFn{
+  matchPasswordValues(matchTo: string): ValidatorFn{
     return (control: AbstractControl) => {
-      return control.value === control.parent?.get(matchTo)?.value ? null : {isMatching: true};
+      return control.value === control.parent?.get(matchTo)?.value ? null : {isPasswordMatching: true};
+    }
+  }
+
+  matchEmailValues(matchTo: string): ValidatorFn{
+    return (control: AbstractControl) => {
+      return control.value === control.parent?.get(matchTo)?.value ? null : {isEmailMatching: true};
     }
   }
 

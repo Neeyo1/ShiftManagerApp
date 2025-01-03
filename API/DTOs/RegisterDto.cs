@@ -19,4 +19,7 @@ public class RegisterDto
     [Required]
     [StringLength(48)]
     public required string LastName { get; set; }
+
+    [Required]
+    public required string Email { get; set; }
 }

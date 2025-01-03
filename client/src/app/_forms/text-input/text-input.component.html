@@ -21,9 +21,14 @@
             {{label()}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
         </div>
     }
-    @if (control.hasError('isMatching')) {
+    @if (control.hasError('isPasswordMatching')) {
         <div class="invalid-feedback text start">
             Passwords do not match
+        </div>
+    }
+    @if (control.hasError('isEmailMatching')) {
+        <div class="invalid-feedback text start">
+            Emails do not match
         </div>
     }
     @if (control.hasError('hasNumber')) {
@@ -49,6 +54,11 @@
     @if (control.hasError('hasOnlyNumbers')) {
         <div class="invalid-feedback text start">
             {{label()}} must contain only numbers
+        </div>
+    }
+    @if (control.hasError('email')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must be valid email
         </div>
     }
 </div>

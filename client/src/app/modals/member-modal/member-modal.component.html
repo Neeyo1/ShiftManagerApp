@@ -18,6 +18,12 @@
                     <app-text-input [formControl]="$any(memberForm.controls['lastName'])"
                         [label]="'Last name'"></app-text-input>
 
+                    <app-text-input [formControl]="$any(memberForm.controls['email'])"
+                        [label]="'Email'"></app-text-input>
+
+                    <app-text-input [formControl]="$any(memberForm.controls['confirmEmail'])"
+                        [label]="'Confirm email'"></app-text-input>
+
                     <app-text-input [formControl]="$any(memberForm.controls['password'])"
                         [label]="'Password'" [type]="'password'"></app-text-input>
 
