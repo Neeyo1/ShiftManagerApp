@@ -101,6 +101,9 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         if (user.EmailConfirmed == false)
             return BadRequest("This user's email was not confirmed");
 
+        if (user.LastMailSent.AddDays(1) > DateTime.UtcNow)
+            return BadRequest("Email to this account has already been sent in last 24 hours, try again later");
+
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
         if (token == null) return BadRequest("Failed to generate reset password token");
 

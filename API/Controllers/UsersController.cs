@@ -72,10 +72,11 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, UserManager
         await mailService.SendMailAsync(user.Email!, "Account confirmation",
             $"New account has been created using your email, to confirm your identity please click this link: https://shiftmanager.pl/account-confirm?email={user.Email}&token={token}");
 
-        var userToReturn = mapper.Map<UserDto>(user);
-        userToReturn.Token = await tokenService.CreateToken(user);
+        user.LastMailSent = DateTime.UtcNow;
+        if (await unitOfWork.Complete())
+            return NoContent();
 
-        return NoContent();
+        return BadRequest("Failed to save time of last email sent");
     }
 
     [Authorize(Policy = "RequireAdminRole")]

@@ -8,6 +8,7 @@ public class AppUser : IdentityUser<int>
     public required string LastName { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime LastActive { get; set; } = DateTime.UtcNow;
+    public DateTime LastMailSent { get; set; }
 
     //AppUser - AppUserRole
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
