@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService,
-    IMapper mapper, IUnitOfWork unitOfWork, IMailService mailService) : BaseApiController
+    IMapper mapper, IUnitOfWork unitOfWork, IEmailService emailService) : BaseApiController
 {
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
@@ -94,22 +94,29 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     [HttpPost("forgot-password")]
     public async Task<ActionResult<UserDto>> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
     {
-        var user = await userManager.FindByEmailAsync(forgotPasswordDto.Mail);
+        var user = await userManager.FindByEmailAsync(forgotPasswordDto.Email);
         if (user == null || user.UserName == null || user.Email == null)
             return BadRequest("User with this email does not exist");
 
         if (user.EmailConfirmed == false)
             return BadRequest("This user's email was not confirmed");
 
-        if (user.LastMailSent.AddDays(1) > DateTime.UtcNow)
+        if (user.LastEmailSent.AddDays(1) > DateTime.UtcNow)
             return BadRequest("Email to this account has already been sent in last 24 hours, try again later");
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
         if (token == null) return BadRequest("Failed to generate reset password token");
 
-        await mailService.SendMailAsync(user.Email, "Reset password",
-            $"Your password reset link: https://shiftmanager.pl/reset-password?email={user.Email}&token={token}");
-        return Ok("Email sent successfully!");
+        await emailService.SendEmailAsync(user, "Reset password",
+            $"Your password reset link: https://shiftmanager.pl/account/reset-password?email={user.Email}&token={token}");
+        
+        if (unitOfWork.HasChanges())
+        {
+            await unitOfWork.Complete();
+            return NoContent();
+        }
+            
+        return BadRequest("Failed to send email");
     }
 
     [HttpPut("reset-password")]
@@ -130,22 +137,14 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     }
 
     [HttpPost("confirm-account")]
-    public async Task<ActionResult<UserDto>> ConfirmAccount(MailConfirm mailConfirm)
+    public async Task<ActionResult<UserDto>> ConfirmAccount(EmailConfirm emailConfirm)
     {
-        var user = await userManager.FindByEmailAsync(mailConfirm.Email);
+        var user = await userManager.FindByEmailAsync(emailConfirm.Email);
         if (user == null || user.UserName == null || user.Email == null)
             return BadRequest("User with this email does not exist");
 
-        var result = await userManager.ConfirmEmailAsync(user, mailConfirm.Token);
-        if (result.Succeeded) return Ok("Email confirmed successfully");
+        var result = await userManager.ConfirmEmailAsync(user, emailConfirm.Token);
+        if (result.Succeeded) return NoContent();
         return BadRequest(result.Errors);
-    }
-
-    [Authorize]
-    [HttpPost("test-mail")]
-    public async Task<ActionResult> TestMail(SendMailDto sendMailDto)
-    {
-        await mailService.SendMailAsync(sendMailDto.ToMail, sendMailDto.Subject, sendMailDto.Body);
-        return Ok("Email sent successfully!");
     }
 }

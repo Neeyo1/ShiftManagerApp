@@ -1,6 +1,6 @@
 namespace API.Helpers;
 
-public class MailSettings
+public class EmailSettings
 {
     public required string Host { get; set; }
     public int Port { get; set; }

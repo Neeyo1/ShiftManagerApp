@@ -14,7 +14,7 @@ namespace API.Controllers;
 
 [Authorize]
 public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager,
-    ITokenService tokenService, IMailService mailService) : BaseApiController
+    IEmailService emailService) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] MemberParams memberParams)
@@ -69,14 +69,16 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, UserManager
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
         if (token == null) return BadRequest("Failed to generate reset password token");
 
-        await mailService.SendMailAsync(user.Email!, "Account confirmation",
-            $"New account has been created using your email, to confirm your identity please click this link: https://shiftmanager.pl/account-confirm?email={user.Email}&token={token}");
+        await emailService.SendEmailAsync(user, "Account confirmation",
+            $"New account has been created using your email, to confirm your identity please click this link: https://shiftmanager.pl/account/account-confirm?email={user.Email}&token={token}");
 
-        user.LastMailSent = DateTime.UtcNow;
-        if (await unitOfWork.Complete())
+        if (unitOfWork.HasChanges())
+        {
+            await unitOfWork.Complete();
             return NoContent();
-
-        return BadRequest("Failed to save time of last email sent");
+        }
+            
+        return BadRequest("Failed to send email");
     }
 
     [Authorize(Policy = "RequireAdminRole")]

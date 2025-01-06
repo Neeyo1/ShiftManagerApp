@@ -16,6 +16,8 @@ import { NotificationDetailComponent } from './notification/notification-detail/
 import { MemberListComponent } from './member/member-list/member-list.component';
 import { MemberDetailComponent } from './member/member-detail/member-detail.component';
 import { SimulationComponent } from './simulation/simulation.component';
+import { ConfirmAccountComponent } from './account/confirm-account/confirm-account.component';
+import { ResetPasswordComponent } from './account/reset-password/reset-password.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -41,5 +43,7 @@ export const routes: Routes = [
     {path: 'not-found', component: NotFoundComponent},
     {path: 'server-error', component: ServerErrorComponent},
     {path: 'simulation', component: SimulationComponent},
+    {path: 'account/confirm-account', component: ConfirmAccountComponent},
+    {path: 'account/reset-password', component: ResetPasswordComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'},
 ];

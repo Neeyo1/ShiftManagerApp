@@ -37,4 +37,8 @@ export class NavComponent {
   changePassword(){
     this.myModalService.openChangePasswordModal();
   }
+
+  forgotPassword(){
+    this.myModalService.openForgotPasswordModal();
+  }
 }

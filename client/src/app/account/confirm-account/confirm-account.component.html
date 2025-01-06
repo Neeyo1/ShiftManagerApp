@@ -1,0 +1,19 @@
+<h3>Account confirmation</h3>
+
+@if (result() === undefined) {
+    <h1>Waiting</h1>
+} @else if (result() == true) {
+    <h1 class="text-success">Success</h1>
+} @else {
+    <h1 class="text-danger">Failed</h1>
+}
+
+@if (validationErrors) {
+    <div class="alert alert-danger text-start">
+        <ul>
+            @for (error of validationErrors; track $index) {
+                <li>{{error.description}}</li>
+                }
+        </ul>
+    </div>
+}

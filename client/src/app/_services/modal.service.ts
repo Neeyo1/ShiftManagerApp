@@ -21,6 +21,7 @@ import { MemberModalComponent } from '../modals/member-modal/member-modal.compon
 import { MemberService } from './member.service';
 import { ChangeManagerModalComponent } from '../modals/change-manager-modal/change-manager-modal.component';
 import { Manager } from '../_models/manager';
+import { ForgotPasswordModalComponent } from '../modals/forgot-password-modal/forgot-password-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -309,6 +310,27 @@ export class ModalService {
           let memberId = this.bsModalRef.content.changeManagerForm.value['memberId'];
           this.departmentService.removeManager(departmentId, memberId).subscribe({
             next: _ => this.departmentService.getDepartments()
+          })
+        }
+      }
+    })
+  }
+
+  openForgotPasswordModal(){
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false
+      }
+    };
+    this.bsModalRef = this.modalService.show(ForgotPasswordModalComponent, config);
+    return this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let forgotPasswordForm = this.bsModalRef.content.forgotPasswordForm;
+
+          this.accountService.forgotPassword(forgotPasswordForm.value['email']).subscribe({
+            next: _ => this.toastrService.success("Email sent successfully!")
           })
         }
       }

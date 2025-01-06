@@ -45,7 +45,7 @@ export class ChangePasswordModalComponent implements OnInit{
 
   matchValues(matchTo: string): ValidatorFn{
     return (control: AbstractControl) => {
-      return control.value === control.parent?.get(matchTo)?.value ? null : {isMatching: true};
+      return control.value === control.parent?.get(matchTo)?.value ? null : {isPasswordMatching: true};
     }
   }
 
