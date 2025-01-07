@@ -3,7 +3,7 @@
 
 ## About project
 
-ShiftManagerApp is an application designed for potential business owners, allowing them to manage their departments, employees, work shift schedules, and work records. The system architecture is based on assumption that only selected users have access to system resources by logging into their accounts, which are created by the system administrator. Application is written in ASP.Net Core on backend side, and Angular on client side.
+ShiftManagerApp is an application designed for potential business owners, allowing them to manage their departments, employees, work shift schedules, and work records. The system architecture is based on assumption that only selected users have access to system resources by logging into their accounts, which are created by the system administrator. Application is written in ASP.Net Core on backend side, and Angular on client side. Additionaly application uses technologies such as WebSocket for real-time notification functionality and SMTP server for email sending.
 
 ## Functionality
 
@@ -12,6 +12,8 @@ Users without account can:
 
 Regular users can:
 - Get informations about departments, employees, work shifts, work records and other users.
+- Confirm accounts via link sent to user's email
+- Change or reset password to account via link sent to user's email
 
 Managers can:
 - Access same functionalities as regular users.
